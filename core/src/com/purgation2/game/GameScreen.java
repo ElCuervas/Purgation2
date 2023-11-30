@@ -1,5 +1,6 @@
 package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sun.jvm.hotspot.utilities.Assert;
 
@@ -57,6 +59,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0.2f, 1);
+		handleInput();
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 
@@ -114,5 +117,31 @@ public class GameScreen implements Screen {
 
 	public void generarMinion() {
 	}
+	private void handleInput() {
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			camera.zoom += 0.02;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+			camera.zoom -= 0.02;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			camera.translate(-5, 0, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			camera.translate(5, 0, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+			camera.translate(0, -5, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+			camera.translate(0, 5, 0);
+		}
+		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 1000/camera.viewportWidth);
 
+		float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
+		float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
+
+		camera.position.x = MathUtils.clamp(camera.position.x, effectiveViewportWidth / 2f, 1000 - effectiveViewportWidth / 2f);
+		camera.position.y = MathUtils.clamp(camera.position.y, effectiveViewportHeight / 2f, 1000 - effectiveViewportHeight / 2f);
+	}
 }
