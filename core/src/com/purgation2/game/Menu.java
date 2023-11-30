@@ -5,21 +5,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-
-	public void iniciarJuego() {
-	}
-
-	public void cerrarJuego() {
-	}
-
-	public void pausar() {
-
-	}
-
 public class Menu implements Screen {
 	final Setup game;
 
 	OrthographicCamera camera;
+
 	public Menu(final Setup game) {
 		this.game = game;
 		camera = new OrthographicCamera();
@@ -72,4 +62,10 @@ public class Menu implements Screen {
 	public void dispose() {
 
 	}
+
+	public void iniciarJuego() {
+	}
+	public void cerrarJuego() {
+	}
+
 }
