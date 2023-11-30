@@ -5,14 +5,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import sun.jvm.hotspot.utilities.Assert;
 
-public abstract class Entidad extends Rectangle implements movimientos {
+public abstract class Entidad implements movimientos {
+	Rectangle hitBox;
 	protected long vida;
 	protected long daño;
 	protected long velocidad;
 	protected Texture textura;
 
 	public Entidad(float x, float y, float width, float height,Texture image) {
-		super(x, y, width, height);
+		hitBox=new Rectangle(x,y,width,height);
 		textura = image;
 		this.vida = 100;
 		this.daño = 10;

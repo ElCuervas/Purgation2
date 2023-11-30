@@ -18,6 +18,8 @@ public class Jugador extends Entidad {
 	private long puntajeTotal;
 	public Sprite sprite;
 
+	private long flip=1;
+
 	public Jugador(float x, float y, float width, float height, Texture image) {
 		super(x, y, width, height, image);
 		this.probabilidadCritico=0;
@@ -25,6 +27,7 @@ public class Jugador extends Entidad {
 		this.regenacion=1;
 		this.puntajeTotal=0;
 		sprite=new Sprite(textura);
+		sprite.setSize(width, height);
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class Jugador extends Entidad {
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
-			Bala bala = new Bala(x+ 8, y+ 8,touchPos.x-30,touchPos.y-30);
+			Bala bala = new Bala(hitBox.x, hitBox.y+ 8, touchPos.x-30,touchPos.y-30);
 			return bala;
 		}
 		return null;
@@ -47,28 +50,26 @@ public class Jugador extends Entidad {
 
 
 	public void controlls() {
+
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			x -= this.velocidad * Gdx.graphics.getDeltaTime();
-			this.x = -1.0F;
+			hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
+			flip = -1;
 		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			x += this.velocidad * Gdx.graphics.getDeltaTime();
-			this.x = 1.0F;
+			hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
+			flip = 1;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			y -= this.velocidad * Gdx.graphics.getDeltaTime();
-			this.y = -1.0F;
+			hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			y += this.velocidad * Gdx.graphics.getDeltaTime();
-			this.y = 1.0F;
+			hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
 		}
-		sprite.setPosition(x,y);
-		this.actualizarDireccion(this.x);
+		this.actualizarDireccion(flip);
 	}
 
-	private void actualizarDireccion(float direccionX) {
-		if (direccionX > 0.0F) {
+	private void actualizarDireccion(float direccion) {
+		if (direccion ==1) {
 			this.sprite.setFlip(false, false);
-		} else if (direccionX < 0.0F) {
+		} else if (direccion == -1) {
 			this.sprite.setFlip(true, false);
 		}
 
