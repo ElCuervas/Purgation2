@@ -2,6 +2,9 @@ package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -16,6 +19,8 @@ public class GameScreen implements Screen {
 	OrthographicCamera camera;
 	Sprite mapa;
 	AssetManager asset;
+	Sound DeadSound;
+	Music SongMusic;
 	Jugador player1;
 	Collection<Bala> balasJugador;
 	Collection<Bala> balasJefe;
@@ -29,6 +34,8 @@ public class GameScreen implements Screen {
 		this.game=game;
 		asset = new AssetManager();
 		asset.load("mapa.png", Texture.class);
+		asset.load("player.png",Texture.class);
+		asset.load("enemigo.png", Texture.class);
 		asset.finishLoading();
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
@@ -41,6 +48,11 @@ public class GameScreen implements Screen {
 		camera.position.set(600, 480, 0); //x player, y player
 		camera.zoom=25;
 		camera.update();
+
+		DeadSound=Gdx.audio.newSound(Gdx.files.internal("dead.mp3"));
+		SongMusic=Gdx.audio.newMusic(Gdx.files.internal("songfond.mp3"));
+		SongMusic.setVolume(0.4f);
+		SongMusic.setLooping(true);
 	}
 	@Override
 	public void render(float delta) {
@@ -62,7 +74,7 @@ public class GameScreen implements Screen {
 	}
 	@Override
 	public void show() {
-
+		SongMusic.play();
 	}
 	@Override
 	public void pause() {
@@ -81,7 +93,8 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-
+		asset.dispose();
+		DeadSound.dispose();
 	}
 
 
