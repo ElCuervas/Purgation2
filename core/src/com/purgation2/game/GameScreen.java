@@ -36,7 +36,8 @@ public class GameScreen implements Screen {
 		asset.load("enemigo.png", Texture.class);
 		asset.finishLoading();
 
-		player1 = new Jugador(0,0,64,64,((Texture) asset.get("player.png")));
+		player1 = new Jugador(0,0,64*3,64*3,((Texture) asset.get("player.png")));
+		player1.velocidad=900;
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
 		mapa.setPosition(0,0);
@@ -62,16 +63,26 @@ public class GameScreen implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
 		mapa.draw(game.batch);
-		player1.sprite.draw(game.batch);
+		game.batch.draw(player1.sprite,player1.hitBox.x,player1.hitBox.y,player1.hitBox.width,player1.hitBox.height);
 		game.batch.end();
+
+		if (player1.hitBox.x < 0)
+			player1.hitBox.x = 0;
+		if (player1.hitBox.x > 5000 - player1.hitBox.width)
+			player1.hitBox.x = 5000 - player1.hitBox.width;
+		if (player1.hitBox.y < 0)
+			player1.hitBox.y = 0;
+		if (player1.hitBox.y > 5000 - player1.hitBox.height)
+			player1.hitBox.y = 5000 - player1.hitBox.height;
+
 		player1.controlls();
 
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		camera.viewportWidth = 30f;
-		camera.viewportHeight = 30f * height/width;
+		camera.viewportWidth = 40f;
+		camera.viewportHeight = 40f * height/width;
 		camera.update();
 	}
 	@Override
@@ -118,16 +129,16 @@ public class GameScreen implements Screen {
 			camera.zoom -= 0.02;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			camera.translate(-5, 0, 0);
+			camera.translate(-11, 0, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			camera.translate(5, 0, 0);
+			camera.translate(11, 0, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			camera.translate(0, -5, 0);
+			camera.translate(0, -11, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			camera.translate(0, 5, 0);
+			camera.translate(0, 11, 0);
 		}
 		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000/camera.viewportWidth);
 
