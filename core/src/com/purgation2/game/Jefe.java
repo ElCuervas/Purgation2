@@ -6,8 +6,6 @@ public class Jefe extends Enemigo {
 	}
 
 	public void ataqueEspecial() {
-		// TODO - implement Jefe.ataqueEspecial
-		throw new UnsupportedOperationException();
 	}
 
 }

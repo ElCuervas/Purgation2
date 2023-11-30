@@ -6,6 +6,6 @@ public interface movimientos {
 
 	void moverse();
 
-	void atacar(OrthographicCamera camera);
+	Bala atacar(OrthographicCamera camera);
 
 }
