@@ -4,24 +4,21 @@ public class Mejoras {
 	private double porcentajeMejoraJugador;
 	private double porcentajeMejoraEntidades;
 
+	public Mejoras() {
+		this.porcentajeMejoraJugador = 0.23;
+		this.porcentajeMejoraEntidades = 0.22;
+	}
+
 	public void mejorarEstadisticasJugador() {
-		// TODO - implement Mejoras.mejorarEstadisticasJugador
-		throw new UnsupportedOperationException();
 	}
 
 	public void MejorarEstadisiticasEnemigo() {
-		// TODO - implement Mejoras.MejorarEstadisiticasEnemigo
-		throw new UnsupportedOperationException();
 	}
 
 	public void MejorarEstadisticasMinions() {
-		// TODO - implement Mejoras.MejorarEstadisticasMinions
-		throw new UnsupportedOperationException();
 	}
 
 	public void MejorarEstadisticasJefe() {
-		// TODO - implement Mejoras.MejorarEstadisticasJefe
-		throw new UnsupportedOperationException();
 	}
 
 }
