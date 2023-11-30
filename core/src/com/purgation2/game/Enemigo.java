@@ -1,10 +1,11 @@
 package com.purgation2.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Enemigo extends Entidad {
-    public Enemigo(float x, float y, float width, float height, String rutaTextura) {
-        super(x, y, width, height, rutaTextura);
+    public Enemigo(float x, float y, float width, float height, Texture image) {
+        super(x, y, width, height, image);
     }
 
     @Override

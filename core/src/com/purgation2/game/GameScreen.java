@@ -36,6 +36,8 @@ public class GameScreen implements Screen {
 		asset.load("enemigo.png", Texture.class);
 		asset.finishLoading();
 
+		player1 = new Jugador(0,0,64,64,((Texture) asset.get("player.png")));
+
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
 		mapa.setPosition(0,0);
 		mapa.setSize(1000,1000);
@@ -58,10 +60,11 @@ public class GameScreen implements Screen {
 		handleInput();
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
-
 		game.batch.begin();
 		mapa.draw(game.batch);
+		player1.sprite.draw(game.batch);
 		game.batch.end();
+		player1.controlls();
 
 	}
 

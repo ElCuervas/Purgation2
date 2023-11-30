@@ -3,9 +3,12 @@ package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+
+import java.awt.*;
 
 public class Jugador extends Entidad {
 
@@ -13,10 +16,10 @@ public class Jugador extends Entidad {
 	private long dañoCritico;
 	private double regenacion;
 	private long puntajeTotal;
-	private Sprite sprite;
+	public Sprite sprite;
 
-	public Jugador(float x, float y, float width, float height, String rutaTextura) {
-		super(x, y, width, height, rutaTextura);
+	public Jugador(float x, float y, float width, float height, Texture image) {
+		super(x, y, width, height, image);
 		this.probabilidadCritico=0;
 		this.dañoCritico=2;
 		this.regenacion=1;
@@ -44,22 +47,21 @@ public class Jugador extends Entidad {
 
 
 	public void controlls() {
-		if (Gdx.input.isKeyPressed(21)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			x -= this.velocidad * Gdx.graphics.getDeltaTime();
 			this.x = -1.0F;
-		} else if (Gdx.input.isKeyPressed(22)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
 			x += this.velocidad * Gdx.graphics.getDeltaTime();
 			this.x = 1.0F;
 		}
-
-		if (Gdx.input.isKeyPressed(20)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			y -= this.velocidad * Gdx.graphics.getDeltaTime();
 			this.y = -1.0F;
-		} else if (Gdx.input.isKeyPressed(19)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
 			y += this.velocidad * Gdx.graphics.getDeltaTime();
 			this.y = 1.0F;
 		}
-
+		sprite.setPosition(x,y);
 		this.actualizarDireccion(this.x);
 	}
 
