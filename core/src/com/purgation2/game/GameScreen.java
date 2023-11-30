@@ -38,13 +38,13 @@ public class GameScreen implements Screen {
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
 		mapa.setPosition(0,0);
-		mapa.setSize(1000,1000);
+		mapa.setSize(5000,5000);
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera(50*(h/w), 50);
 		camera.position.set(600, 480, 0); //x player, y player
-		camera.zoom=25;
+		camera.zoom=60;
 		camera.update();
 
 		DeadSound=Gdx.audio.newSound(Gdx.files.internal("dead.mp3"));
@@ -126,12 +126,12 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
 			camera.translate(0, 5, 0);
 		}
-		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 1000/camera.viewportWidth);
+		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000/camera.viewportWidth);
 
 		float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
 		float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
 
-		camera.position.x = MathUtils.clamp(camera.position.x, effectiveViewportWidth / 2f, 1000 - effectiveViewportWidth / 2f);
-		camera.position.y = MathUtils.clamp(camera.position.y, effectiveViewportHeight / 2f, 1000 - effectiveViewportHeight / 2f);
+		camera.position.x = MathUtils.clamp(camera.position.x, effectiveViewportWidth / 2f, 5000 - effectiveViewportWidth / 2f);
+		camera.position.y = MathUtils.clamp(camera.position.y, effectiveViewportHeight / 2f, 5000 - effectiveViewportHeight / 2f);
 	}
 }
