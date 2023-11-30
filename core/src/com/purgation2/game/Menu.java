@@ -3,15 +3,18 @@ package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Menu implements Screen {
 	final Setup game;
 
 	OrthographicCamera camera;
+	Texture fondo;
 
 	public Menu(final Setup game) {
 		this.game = game;
+		fondo=new Texture(Gdx.files.internal("fondo.png"));
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 	}
@@ -29,8 +32,7 @@ public class Menu implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 
 		game.batch.begin();
-		game.font.draw(game.batch, "Purgation2", 100, 150);
-		game.font.draw(game.batch, "Has click para empezar", 100, 100);
+		game.batch.draw(fondo,0,0,camera.viewportWidth,camera.viewportHeight);
 		game.batch.end();
 		if (Gdx.input.isTouched()) {
 			game.setScreen(new GameScreen(game));
