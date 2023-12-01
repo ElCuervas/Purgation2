@@ -26,7 +26,7 @@ public class Jugador extends Entidad {
 	private Texture textureAnimation;
 	float stateTime;
 	private long tiempoUltimoAtaque;
-	private long cadenciaDisparo = 75;
+	private long cadenciaDisparo = 500;
 	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
 
