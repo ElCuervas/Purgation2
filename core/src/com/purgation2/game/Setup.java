@@ -11,7 +11,7 @@ public class Setup extends Game {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
-		font = new BitmapFont(); // use libGDX's default Arial font
+		font = new BitmapFont();
 		this.setScreen(new Menu(this));
 	}
 	@Override
