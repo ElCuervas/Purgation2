@@ -21,7 +21,7 @@ public class Jugador extends Entidad {
 	private long puntajeTotal;
 	public Sprite sprite;
 	private long tiempoUltimoAtaque;
-	private long cadenciaDisparo = 500;
+	private long cadenciaDisparo = 75;
 	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
 
@@ -40,11 +40,10 @@ public class Jugador extends Entidad {
 		balasJugador = new ArrayList<>();
 	}
 	public void renderizar( SpriteBatch batch) {
-		batch.draw(sprite, hitBox.x, hitBox.y, hitBox.width, hitBox.height);
-
 		for (Bala bala : balasJugador) {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
 		}
+		batch.draw(sprite, hitBox.x, hitBox.y, hitBox.width, hitBox.height);
 
 		Iterator<Bala> iter = balasJugador.iterator();
 		while (iter.hasNext()) {
