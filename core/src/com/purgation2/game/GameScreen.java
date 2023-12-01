@@ -84,7 +84,6 @@ public class GameScreen implements Screen {
 			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width*2, enemigo.hitBox.height*2);
 			enemigo.moverse();
 		}
-
 		game.batch.end();
 
 		if (player1.hitBox.x < 0)
@@ -95,8 +94,6 @@ public class GameScreen implements Screen {
 			player1.hitBox.y = 0;
 		if (player1.hitBox.y > 5000 - player1.hitBox.height)
 			player1.hitBox.y = 5000 - player1.hitBox.height;
-
-
 
 		if (camera.position.x < 0)
 			camera.position.x = 0;
@@ -112,16 +109,15 @@ public class GameScreen implements Screen {
 			Enemigo enemigoActivo = iterEnemigos.next();
 			enemigoActivo.recibirDaño();
 			if (enemigoActivo.getVida() <= 0) {
+				DeadSound.play();
 				iterEnemigos.remove();
 			}
 		}
-
 		player1.moverse();
 		player1.atacar(camera,(Texture) asset.get("bala.png"));
 		if (tiempoActual()-tiempoDesdeUltimaGeneracion >= tiempoEntreGeneracionEnemigo) {
 			tiempoDesdeUltimaGeneracion = tiempoActual();
 			generarEnemigo((Texture) asset.get("enemigo.png"),5);
-
 		}
 	}
 
