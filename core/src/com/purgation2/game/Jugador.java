@@ -5,10 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 
 public class Jugador extends Entidad {
 
@@ -17,6 +19,9 @@ public class Jugador extends Entidad {
 	private double regenacion;
 	private long puntajeTotal;
 	public Sprite sprite;
+	private long tiempoUltimoAtaque;
+	private long cadenciaDisparo = 500;
+	private ArrayList<Bala> balasJugador;
 
 	private long flip=1;
 
@@ -26,31 +31,42 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		this.regenacion=1;
 		this.puntajeTotal=0;
+		tiempoUltimoAtaque = 0;
 		sprite=new Sprite(textura);
 		sprite.setSize(width, height);
+		balasJugador = new ArrayList<>();
+	}
+	public void renderizar( SpriteBatch batch) {
+		batch.draw(sprite, hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+
+		for (Bala bala : balasJugador) {
+			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
+		}
+
+		Iterator<Bala> iter = balasJugador.iterator();
+		while (iter.hasNext()) {
+			Bala bala = iter.next();
+			bala.actualizar(Gdx.graphics.getDeltaTime());
+			if (bala.x < 0 || bala.y < 0 || bala.x > 5000 || bala.y > 5000) {
+				iter.remove();
+			}
+		}
 	}
 
 	@Override
-	public void moverse() {
-
-
-	}
-
-	@Override
-	public Bala atacar(OrthographicCamera camera) {
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+	public void atacar(OrthographicCamera camera, Texture balaTexture) {
+		long tiempoActual = System.currentTimeMillis();
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
+			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
-			Bala bala = new Bala(hitBox.x, hitBox.y+ 8, touchPos.x-30,touchPos.y-30);
-			return bala;
+			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture);
+			balasJugador.add(nuevaBala);
+			nuevaBala.setVelocidad(nuevaBala.getVelocidad()+1000);
 		}
-		return null;
 	}
-
-
-
-	public void controlls() {
-
+	@Override
+	public void moverse() {
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
 			flip = -1;

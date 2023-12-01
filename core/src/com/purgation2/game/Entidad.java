@@ -1,9 +1,7 @@
 package com.purgation2.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import sun.jvm.hotspot.utilities.Assert;
 
 public abstract class Entidad implements movimientos {
 	Rectangle hitBox;

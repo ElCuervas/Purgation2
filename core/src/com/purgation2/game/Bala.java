@@ -1,13 +1,17 @@
 package com.purgation2.game;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Bala extends Rectangle {
-	public float velocidad;
-	public float angulo;
+	private Sprite sprite;
+	private float velocidad;
+	private float angulo;
 
-	public Bala(float x, float y, float targetX, float targetY) {
+	public Bala(float x, float y, float targetX, float targetY,Texture bala) {
 		super(x, y, 64, 64);
+		sprite = new Sprite(bala);
 		this.velocidad = 500;
 		angulo = MathUtils.atan2(targetY - y, targetX - x);
 	}
@@ -18,5 +22,17 @@ public class Bala extends Rectangle {
 
 		x += xSpeed * delta;
 		y += ySpeed * delta;
+	}
+
+	public float getVelocidad() {
+		return velocidad;
+	}
+
+	public void setVelocidad(float velocidad) {
+		this.velocidad = velocidad;
+	}
+
+	public Sprite getSprite() {
+		return sprite;
 	}
 }

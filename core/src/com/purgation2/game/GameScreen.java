@@ -34,6 +34,7 @@ public class GameScreen implements Screen {
 		asset.load("mapa.png", Texture.class);
 		asset.load("player.png",Texture.class);
 		asset.load("enemigo.png", Texture.class);
+		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
 
 		player1 = new Jugador(0,0,64*3,64*3,((Texture) asset.get("player.png")));
@@ -62,8 +63,10 @@ public class GameScreen implements Screen {
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
+
 		mapa.draw(game.batch);
-		game.batch.draw(player1.sprite,player1.hitBox.x,player1.hitBox.y,player1.hitBox.width,player1.hitBox.height);
+		player1.renderizar(game.batch);//renderizado individual
+
 		game.batch.end();
 
 		if (player1.hitBox.x < 0)
@@ -75,7 +78,8 @@ public class GameScreen implements Screen {
 		if (player1.hitBox.y > 5000 - player1.hitBox.height)
 			player1.hitBox.y = 5000 - player1.hitBox.height;
 
-		player1.controlls();
+		player1.moverse();
+		player1.atacar(camera,(Texture) asset.get("bala.png"));
 
 	}
 
