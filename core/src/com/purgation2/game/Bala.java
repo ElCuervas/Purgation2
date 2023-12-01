@@ -23,7 +23,6 @@ public class Bala extends Rectangle {
 		x += xSpeed * delta;
 		y += ySpeed * delta;
 	}
-
 	public float getVelocidad() {
 		return velocidad;
 	}

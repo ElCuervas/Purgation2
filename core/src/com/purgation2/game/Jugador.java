@@ -36,6 +36,7 @@ public class Jugador extends Entidad {
 		super(x, y, width, height, image);
 		this.probabilidadCritico=0;
 		this.dañoCritico=2;
+		daño=200;
 		this.regenacion=1;
 		this.puntajeTotal=0;
 
@@ -97,6 +98,15 @@ public class Jugador extends Entidad {
 			nuevaBala.setVelocidad(nuevaBala.getVelocidad()+1000);
 		}
 	}
+
+	public ArrayList<Bala> getBalasJugador() {
+		return balasJugador;
+	}
+
+	public void removerBala(Bala bala) {
+		balasJugador.remove(bala);
+	}
+
 	@Override
 	public void moverse() {
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {

@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.*;
 public class GameScreen implements Screen {
@@ -79,9 +81,10 @@ public class GameScreen implements Screen {
 		mapa.draw(game.batch);
 		player1.renderizar(game.batch);//renderizado individual
 		for (Enemigo enemigo:enemigos) {
-			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width, enemigo.hitBox.height);
+			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width*2, enemigo.hitBox.height*2);
 			enemigo.moverse();
 		}
+
 		game.batch.end();
 
 		if (player1.hitBox.x < 0)
@@ -94,6 +97,7 @@ public class GameScreen implements Screen {
 			player1.hitBox.y = 5000 - player1.hitBox.height;
 
 
+
 		if (camera.position.x < 0)
 			camera.position.x = 0;
 		if (camera.position.x > 5000 - player1.hitBox.width)
@@ -103,6 +107,15 @@ public class GameScreen implements Screen {
 		if (camera.position.y > 5000 - player1.hitBox.height)
 			camera.position.y = 5000 - player1.hitBox.height;
 
+		Iterator<Enemigo> iterEnemigos = enemigos.iterator();
+		while (iterEnemigos.hasNext()) {
+			Enemigo enemigoActivo = iterEnemigos.next();
+			enemigoActivo.recibirDaño();
+			if (enemigoActivo.getVida() <= 0) {
+				iterEnemigos.remove();
+			}
+		}
+
 		player1.moverse();
 		player1.atacar(camera,(Texture) asset.get("bala.png"));
 		if (tiempoActual()-tiempoDesdeUltimaGeneracion >= tiempoEntreGeneracionEnemigo) {
@@ -110,8 +123,6 @@ public class GameScreen implements Screen {
 			generarEnemigo((Texture) asset.get("enemigo.png"),5);
 
 		}
-
-
 	}
 
 	public float tiempoActual() {
@@ -158,7 +169,7 @@ public class GameScreen implements Screen {
 		for (int i = 0; i < cantidadEnemigos; i++) {
 			float spawnX = player1.hitBox.x + MathUtils.random(200, 400);
 			float spawnY = player1.hitBox.y + MathUtils.random(200, 400);
-			Enemigo nuevoEnemigo = new Enemigo(spawnX, spawnY, 64 * 4, 64 * 4, enemigoTexture, player1);
+			Enemigo nuevoEnemigo = new Enemigo(spawnX, spawnY, 64 * 3, 64 * 3, enemigoTexture, player1);
 			enemigos.add(nuevoEnemigo);
 		}
 	}
