@@ -37,7 +37,7 @@ public class GameScreen implements Screen {
 		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
 
-		player1 = new Jugador(0,0,64*3,64*3,((Texture) asset.get("player.png")));
+		player1 = new Jugador( 5000 / 2 + 64*3/2,5000 / 2 + 64*3/2,64*3,64*3,((Texture) asset.get("player.png")));
 		player1.velocidad=900;
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
@@ -47,7 +47,7 @@ public class GameScreen implements Screen {
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera(50*(h/w), 50);
-		camera.position.set(600, 480, 0); //x player, y player
+		camera.position.set(player1.hitBox.x+(player1.hitBox.width/2), player1.hitBox.y+(player1.hitBox.height/2), 0);//x player, y player
 		camera.zoom=60;
 		camera.update();
 
@@ -127,21 +127,15 @@ public class GameScreen implements Screen {
 	}
 	private void handleInput() {
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			camera.zoom += 0.02;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-			camera.zoom -= 0.02;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			camera.translate(-11, 0, 0);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			camera.translate(11, 0, 0);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			camera.translate(0, -11, 0);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			camera.translate(0, 11, 0);
 		}
 		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000/camera.viewportWidth);

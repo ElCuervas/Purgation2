@@ -2,6 +2,7 @@ package com.purgation2.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,6 +23,7 @@ public class Jugador extends Entidad {
 	private long tiempoUltimoAtaque;
 	private long cadenciaDisparo = 500;
 	private ArrayList<Bala> balasJugador;
+	Sound soundbala;
 
 	private long flip=1;
 
@@ -31,6 +33,7 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		this.regenacion=1;
 		this.puntajeTotal=0;
+		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		tiempoUltimoAtaque = 0;
 		sprite=new Sprite(textura);
 		sprite.setSize(width, height);
@@ -57,6 +60,7 @@ public class Jugador extends Entidad {
 	public void atacar(OrthographicCamera camera, Texture balaTexture) {
 		long tiempoActual = System.currentTimeMillis();
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
+			soundbala.play();
 			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
@@ -67,16 +71,16 @@ public class Jugador extends Entidad {
 	}
 	@Override
 	public void moverse() {
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
 			flip = -1;
-		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
 			flip = 1;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
-		} else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
 		}
 		this.actualizarDireccion(flip);
