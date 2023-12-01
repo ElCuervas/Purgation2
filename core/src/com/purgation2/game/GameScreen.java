@@ -16,6 +16,7 @@ public class GameScreen implements Screen {
 	final Setup game;
 	OrthographicCamera camera;
 	Sprite mapa;
+	Sprite borde;
 	AssetManager asset;
 	Sound DeadSound;
 	Music SongMusic;
@@ -35,19 +36,24 @@ public class GameScreen implements Screen {
 		this.game=game;
 		asset = new AssetManager();
 		asset.load("mapa.png", Texture.class);
-		asset.load("player.png",Texture.class);
+		asset.load("borde.png",Texture.class);
+		asset.load("Player.png",Texture.class);
 		asset.load("enemigo.png", Texture.class);
 		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
 
 
-		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("player.png")));
+		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,(64*3),64*3,((Texture) asset.get("Player.png")));
 		player1.setVelocidad(900);
 		enemigos=new ArrayList<>();
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
 		mapa.setPosition(0,0);
 		mapa.setSize(5000,5000);
+
+		borde = new Sprite((Texture) asset.get("borde.png"));
+		borde.setPosition(-1400,-1400);
+		borde.setSize(8000,8000);
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
@@ -69,6 +75,7 @@ public class GameScreen implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
 
+		borde.draw(game.batch);
 		mapa.draw(game.batch);
 		player1.renderizar(game.batch);//renderizado individual
 		for (Enemigo enemigo:enemigos) {
@@ -85,6 +92,16 @@ public class GameScreen implements Screen {
 			player1.hitBox.y = 0;
 		if (player1.hitBox.y > 5000 - player1.hitBox.height)
 			player1.hitBox.y = 5000 - player1.hitBox.height;
+
+
+		if (camera.position.x < 0)
+			camera.position.x = 0;
+		if (camera.position.x > 5000 - player1.hitBox.width)
+			camera.position.x = 5000 - player1.hitBox.width;
+		if (camera.position.y < 0)
+			camera.position.y = 0;
+		if (camera.position.y > 5000 - player1.hitBox.height)
+			camera.position.y = 5000 - player1.hitBox.height;
 
 		player1.moverse();
 		player1.atacar(camera,(Texture) asset.get("bala.png"));
@@ -164,8 +181,8 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			camera.translate(0, 11, 0);
 		}
-		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000/camera.viewportWidth);
-		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000 / camera.viewportWidth);
+		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 5000);
+		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 5000);
 		updateCameraPosition();
 	}
 	private void updateCameraPosition() {
@@ -180,7 +197,6 @@ public class GameScreen implements Screen {
 		if (!playerOnTopEdge && !playerOnBottomEdge) {
 			camera.position.y = player1.hitBox.y + player1.hitBox.height /2;
 		}
-
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 	}

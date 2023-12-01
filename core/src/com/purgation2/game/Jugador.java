@@ -5,8 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ public class Jugador extends Entidad {
 	private double regenacion;
 	private long puntajeTotal;
 	public Sprite sprite;
+	private Animation<TextureRegion> spriteAnimation;
+	private Texture textureAnimation;
+	float stateTime;
 	private long tiempoUltimoAtaque;
 	private long cadenciaDisparo = 75;
 	private ArrayList<Bala> balasJugador;
@@ -33,17 +38,41 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		this.regenacion=1;
 		this.puntajeTotal=0;
+
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
+
 		tiempoUltimoAtaque = 0;
 		sprite=new Sprite(textura);
+		textureAnimation = new Texture(Gdx.files.internal("Player_animation.png"));
+		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/4, textureAnimation.getHeight());
+		TextureRegion[] animation = new TextureRegion[4];
+		int index=0;
+		for (int i = 0; i < 1; i++) {
+			for (int j = 0; j < 4; j++) {
+				animation[index++]=tmp[i][j];
+			}
+		}
+		spriteAnimation = new Animation<>(0.2f, animation);
+		stateTime=0f;
+
 		sprite.setSize(width, height);
 		balasJugador = new ArrayList<>();
 	}
 	public void renderizar( SpriteBatch batch) {
+		sprite.setPosition(hitBox.x, hitBox.y);
+		sprite.setSize(hitBox.width, hitBox.height);
+		Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
+		if (flip == 1) {
+			frameactual.setFlip(false, false);
+		} else if (flip == -1) {
+			frameactual.setFlip(true, false);
+		}
+		sprite.setRegion(frameactual);
+		stateTime+=Gdx.graphics.getDeltaTime();
 		for (Bala bala : balasJugador) {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
 		}
-		batch.draw(sprite, hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+		sprite.draw(batch);
 
 		Iterator<Bala> iter = balasJugador.iterator();
 		while (iter.hasNext()) {
@@ -72,25 +101,16 @@ public class Jugador extends Entidad {
 	public void moverse() {
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
-			flip = -1;
+			this.flip = -1;
 		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
-			flip = 1;
+			this.flip = 1;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
 		}
-		this.actualizarDireccion(flip);
 	}
 
-	private void actualizarDireccion(float direccion) {
-		if (direccion ==1) {
-			this.sprite.setFlip(false, false);
-		} else if (direccion == -1) {
-			this.sprite.setFlip(true, false);
-		}
-
-	}
 }
