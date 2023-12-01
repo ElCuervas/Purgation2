@@ -36,7 +36,7 @@ public class Jugador extends Entidad {
 		super(x, y, width, height, image);
 		this.probabilidadCritico=0;
 		this.dañoCritico=2;
-		daño=200;
+		daño=50;
 		this.regenacion=1;
 		this.puntajeTotal=0;
 

@@ -8,12 +8,18 @@ public class Bala extends Rectangle {
 	private Sprite sprite;
 	private float velocidad;
 	private float angulo;
+	private boolean perforante;
 
 	public Bala(float x, float y, float targetX, float targetY,Texture bala) {
 		super(x, y, 64, 64);
 		sprite = new Sprite(bala);
 		this.velocidad = 500;
 		angulo = MathUtils.atan2(targetY - y, targetX - x);
+		perforante=false;
+	}
+
+	public boolean isPerforante() {
+		return perforante;
 	}
 
 	public void actualizar(float delta) {

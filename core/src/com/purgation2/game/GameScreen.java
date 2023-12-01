@@ -31,7 +31,8 @@ public class GameScreen implements Screen {
 	private double[] mejorasJugador;
 	private double[] mejorasEnemigo;
 	private double[] mejorasJefe;
-	private float tiempoEntreGeneracionEnemigo = 1000f;
+	private final float tiempoEntreGeneraciones = 10f;
+	private int cantidadEnemigosOleada=10;
 	private float tiempoDesdeUltimaGeneracion;
 
 	public GameScreen(final Setup game){
@@ -68,7 +69,7 @@ public class GameScreen implements Screen {
 		SongMusic=Gdx.audio.newMusic(Gdx.files.internal("songfond.mp3"));
 		SongMusic.setVolume(0.4f);
 		SongMusic.setLooping(true);
-		tiempoDesdeUltimaGeneracion=5000;
+		tiempoDesdeUltimaGeneracion=-5000;
 	}
 	@Override
 	public void render(float delta) {
@@ -115,19 +116,18 @@ public class GameScreen implements Screen {
 				iterEnemigos.remove();
 			}
 		}
-
 		player1.moverse();
 		player1.atacar(camera,(Texture) asset.get("bala.png"));
-		if (tiempoActual()-tiempoDesdeUltimaGeneracion >= tiempoEntreGeneracionEnemigo) {
-			tiempoDesdeUltimaGeneracion = tiempoActual();
-			generarEnemigo((Texture) asset.get("enemigo.png"),5);
 
+		if (tiempoDesdeUltimaGeneracion <= 0) {
+			generarEnemigo((Texture) asset.get("enemigo.png"), cantidadEnemigosOleada);
+			tiempoDesdeUltimaGeneracion = tiempoEntreGeneraciones;
+		} else {
+			tiempoDesdeUltimaGeneracion -= delta;
 		}
 	}
 
-	public float tiempoActual() {
-		return System.currentTimeMillis();
-	}
+
 
 	@Override
 	public void resize(int width, int height) {
@@ -167,11 +167,26 @@ public class GameScreen implements Screen {
 
 	public void generarEnemigo(Texture enemigoTexture, int cantidadEnemigos) {
 		for (int i = 0; i < cantidadEnemigos; i++) {
-			float spawnX = player1.hitBox.x + MathUtils.random(200, 400);
-			float spawnY = player1.hitBox.y + MathUtils.random(200, 400);
-			Enemigo nuevoEnemigo = new Enemigo(spawnX, spawnY, 64 * 3, 64 * 3, enemigoTexture, player1);
+			long margenSpawn=2000;
+			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX(margenSpawn), crearCordenadaY(margenSpawn), 64 * 3, 64 * 3, enemigoTexture, player1);
 			enemigos.add(nuevoEnemigo);
 		}
+	}
+
+	private float crearCordenadaX(long margen) {
+		float spawnX;
+		do {
+			spawnX = MathUtils.random(0, 5000);
+		} while (spawnX > camera.position.x - margen - camera.viewportWidth / 2 && spawnX < margen +camera.position.x + camera.viewportWidth / 2);
+		return spawnX;
+	}
+
+	private float crearCordenadaY(long margen) {
+		float spawnY;
+		do {
+			spawnY = MathUtils.random(0, 5000);
+		} while (spawnY > camera.position.y - margen - camera.viewportHeight / 2 && spawnY < margen +camera.position.y + camera.viewportHeight / 2);
+		return spawnY;
 	}
 
 	public void generarJefe() {

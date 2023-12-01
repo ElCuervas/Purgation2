@@ -13,7 +13,7 @@ public class Enemigo extends Entidad {
     public Enemigo(float x, float y, float width, float height, Texture image, Jugador player) {
         super(x, y, width, height, image);
         this.target = player;
-        this.velocidad = 500;
+        this.velocidad = 300;
     }
     @Override
     public void moverse() {
@@ -35,7 +35,9 @@ public class Enemigo extends Entidad {
             Bala proyectil = iterBalas.next();
             if (proyectil.overlaps(hitBox)) {
                 vida -= target.getDaño();
-                iterBalas.remove();
+                if (!proyectil.isPerforante()) {
+                    iterBalas.remove();
+                }
             }
         }
     }
