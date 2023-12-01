@@ -20,6 +20,7 @@ public class GameScreen implements Screen {
 	Sound DeadSound;
 	Music SongMusic;
 	Jugador player1;
+	ArrayList<Enemigo> enemigos;
 	ArrayList<Bala> balasJugador;
 	ArrayList<Bala> balasJefe;
 	ArrayList<minion> minions;
@@ -27,6 +28,8 @@ public class GameScreen implements Screen {
 	private double[] mejorasJugador;
 	private double[] mejorasEnemigo;
 	private double[] mejorasJefe;
+	private float tiempoEntreGeneracionEnemigo = 1000f;
+	private float tiempoDesdeUltimaGeneracion;
 
 	public GameScreen(final Setup game){
 		this.game=game;
@@ -37,8 +40,10 @@ public class GameScreen implements Screen {
 		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
 
-		player1 = new Jugador( 5000 / 2 + 64*3/2,5000 / 2 + 64*3/2,64*3,64*3,((Texture) asset.get("player.png")));
-		player1.velocidad=900;
+
+		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("player.png")));
+		player1.setVelocidad(900);
+		enemigos=new ArrayList<>();
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
 		mapa.setPosition(0,0);
@@ -49,24 +54,27 @@ public class GameScreen implements Screen {
 		camera = new OrthographicCamera(50*(h/w), 50);
 		camera.position.set(player1.hitBox.x+(player1.hitBox.width/2), player1.hitBox.y+(player1.hitBox.height/2), 0);//x player, y player
 		camera.zoom=60;
-		camera.update();
+		updateCameraPosition();
 
 		DeadSound=Gdx.audio.newSound(Gdx.files.internal("dead.mp3"));
 		SongMusic=Gdx.audio.newMusic(Gdx.files.internal("songfond.mp3"));
 		SongMusic.setVolume(0.4f);
 		SongMusic.setLooping(true);
+		tiempoDesdeUltimaGeneracion=5000;
 	}
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 		handleInput();
-		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
 
 		mapa.draw(game.batch);
 		player1.renderizar(game.batch);//renderizado individual
-
+		for (Enemigo enemigo:enemigos) {
+			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width, enemigo.hitBox.height);
+			enemigo.moverse();
+		}
 		game.batch.end();
 
 		if (player1.hitBox.x < 0)
@@ -80,7 +88,17 @@ public class GameScreen implements Screen {
 
 		player1.moverse();
 		player1.atacar(camera,(Texture) asset.get("bala.png"));
+		if (tiempoActual()-tiempoDesdeUltimaGeneracion >= tiempoEntreGeneracionEnemigo) {
+			tiempoDesdeUltimaGeneracion = tiempoActual();
+			generarEnemigo((Texture) asset.get("enemigo.png"),5);
 
+		}
+
+
+	}
+
+	public float tiempoActual() {
+		return System.currentTimeMillis();
 	}
 
 	@Override
@@ -116,8 +134,16 @@ public class GameScreen implements Screen {
 
 
 
-	public void generarEnemigo() {
 
+
+
+	public void generarEnemigo(Texture enemigoTexture, int cantidadEnemigos) {
+		for (int i = 0; i < cantidadEnemigos; i++) {
+			float spawnX = player1.hitBox.x + MathUtils.random(200, 400);
+			float spawnY = player1.hitBox.y + MathUtils.random(200, 400);
+			Enemigo nuevoEnemigo = new Enemigo(spawnX, spawnY, 64 * 4, 64 * 4, enemigoTexture, player1);
+			enemigos.add(nuevoEnemigo);
+		}
 	}
 
 	public void generarJefe() {
@@ -139,11 +165,23 @@ public class GameScreen implements Screen {
 			camera.translate(0, 11, 0);
 		}
 		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000/camera.viewportWidth);
+		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 2000 / camera.viewportWidth);
+		updateCameraPosition();
+	}
+	private void updateCameraPosition() {
+		boolean playerOnLeftEdge = player1.hitBox.x <= camera.viewportWidth / 2f;
+		boolean playerOnRightEdge = player1.hitBox.x >= 5000 - camera.viewportWidth / 2f;
+		boolean playerOnBottomEdge = player1.hitBox.y <= camera.viewportHeight / 2f;
+		boolean playerOnTopEdge = player1.hitBox.y >= 5000 - camera.viewportHeight / 2f;
+		if (!playerOnRightEdge && !playerOnLeftEdge) {
+			camera.position.x = player1.hitBox.x + player1.hitBox.width / 2;
+		}
 
-		float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
-		float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
+		if (!playerOnTopEdge && !playerOnBottomEdge) {
+			camera.position.y = player1.hitBox.y + player1.hitBox.height /2;
+		}
 
-		camera.position.x = MathUtils.clamp(camera.position.x, effectiveViewportWidth / 2f, 5000 - effectiveViewportWidth / 2f);
-		camera.position.y = MathUtils.clamp(camera.position.y, effectiveViewportHeight / 2f, 5000 - effectiveViewportHeight / 2f);
+		camera.update();
+		game.batch.setProjectionMatrix(camera.combined);
 	}
 }

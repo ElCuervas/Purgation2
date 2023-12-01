@@ -1,17 +1,32 @@
 package com.purgation2.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
 
 public class Enemigo extends Entidad {
-    public Enemigo(float x, float y, float width, float height, Texture image) {
-        super(x, y, width, height, image);
-    }
+    private Jugador target;
 
+    public Enemigo(float x, float y, float width, float height, Texture image, Jugador player) {
+        super(x, y, width, height, image);
+        target=player;
+        this.velocidad=500;
+    }
     @Override
     public void moverse() {
+        float deltaX = target.hitBox.x - hitBox.x;
+        float deltaY = target.hitBox.y - hitBox.y;
+
+        float length = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (length > 0) {
+            deltaX /= length;
+            deltaY /= length;
+        }
+        hitBox.x+= deltaX * velocidad * Gdx.graphics.getDeltaTime();
+        hitBox.y+= deltaY * velocidad * Gdx.graphics.getDeltaTime();
 
     }
 
