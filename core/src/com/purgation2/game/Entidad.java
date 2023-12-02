@@ -14,9 +14,8 @@ public abstract class Entidad implements movimientos {
 	protected Texture textura;
 	protected ArrayList<Bala> balasEntidad;
 
-	public Entidad(float x, float y, float width, float height,Texture image) {
+	public Entidad(float x, float y, float width, float height) {
 		hitBox=new Rectangle(x,y,width,height);
-		textura = image;
 		this.vida = 100;
 		this.daño = 10;
 		this.velocidad = 100;

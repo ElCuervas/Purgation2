@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -18,43 +20,49 @@ public class Jugador extends Entidad {
 	private double probabilidadCritico;
 	private long dañoCritico;
 	private double regenacion;
-	private long tiempoInvencivilidad;
-	private long tiempoUltimoDaño = 0;
+	private long tiempoInvencivilidad=1000;
+	private long tiempoUltimoDaño=1000;
 	private long puntajeTotal;
 	public Sprite sprite;
 	private Animation<TextureRegion> spriteAnimation;
+	private Animation<TextureRegion> spriteAnimationStatic;
+
 	private Texture textureAnimation;
 	float stateTime;
 	private long tiempoUltimoAtaque;
 	private long cadenciaDisparo = 200;
 	private OrthographicCamera camaraJuego;
+	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
 
 	private long flip=1;
 
 	public Jugador(float x, float y, float width, float height, Texture image) {
-		super(x, y, width, height, image);
+		super(x, y, width, height);
 		this.probabilidadCritico=0.1;
 		this.dañoCritico=2;
-		daño=10;
+		this.daño=10;
 		this.regenacion=1;
-		this.tiempoInvencivilidad=1000;
+		this.tiempoInvencivilidad=1;
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		tiempoUltimoAtaque = 0;
-
-		sprite=new Sprite(textura);
-		textureAnimation = new Texture(Gdx.files.internal("Player_animation.png"));
-		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/4, textureAnimation.getHeight());
+		sprite=new Sprite(image);
+		textureAnimation=image;
+		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/6, textureAnimation.getHeight());
 		TextureRegion[] animation = new TextureRegion[4];
+		TextureRegion[] animationStatic = new TextureRegion[2];
 		int index=0;
-		for (int i = 0; i < 1; i++) {
-			for (int j = 0; j < 4; j++) {
-				animation[index++]=tmp[i][j];
-			}
+		for (int i = 0; i < 4; i++) {
+			animation[index++]=tmp[0][i];
 		}
-		spriteAnimation = new Animation<>(0.2f, animation);
+		int index2=0;
+		for (int i = 4; i < 6; i++) {
+			animationStatic[index2++]=tmp[0][i];
+		}
+		spriteAnimation = new Animation<>(0.15f, animation);
+		spriteAnimationStatic = new Animation<>(0.4f,animationStatic);
 		stateTime=0f;
 
 		sprite.setSize(width, height);
@@ -63,13 +71,6 @@ public class Jugador extends Entidad {
 
 		sprite.setPosition(hitBox.x, hitBox.y);
 		sprite.setSize(hitBox.width, hitBox.height);
-		Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
-		if (flip == 1) {
-			frameactual.setFlip(false, false);
-		} else if (flip == -1) {
-			frameactual.setFlip(true, false);
-		}
-		sprite.setRegion(frameactual);
 		stateTime+=Gdx.graphics.getDeltaTime();
 		for (Bala bala : balasEntidad) {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
@@ -88,7 +89,6 @@ public class Jugador extends Entidad {
 		moverse();
 		atacar(texturaBala);
 		barravida.dibujarBarraVida(batch);
-
 	}
 
 	@Override
@@ -104,31 +104,26 @@ public class Jugador extends Entidad {
 			nuevaBala.setVelocidad(nuevaBala.getVelocidad()+1000);
 		}
 	}
-
 	@Override
 	public void recibirDaño(Entidad enemigo) {
-		//recibir daño si el enemigo lo toca
-
-		if (enemigo.hitBox.overlaps(hitBox)&& !esInvencible()){
+		if(enemigo.hitBox.overlaps(hitBox) && !esInvecible()){
 			vida-=enemigo.getDaño();
-			tiempoUltimoDaño = System.currentTimeMillis();
+			tiempoUltimoDaño=System.currentTimeMillis();
 		}
-
-		//recibir daño si una bala lo toca
 		Iterator<Bala> iterBalas = enemigo.balasEntidad.iterator();
 		while (iterBalas.hasNext()) {
 			Bala proyectil = iterBalas.next();
 			if (proyectil.overlaps(hitBox)) {
 				vida -= proyectil.getDañoBala();
-					iterBalas.remove();
+				iterBalas.remove();
 			}
 		}
 	}
 
-	private boolean esInvencible() {
-		return System.currentTimeMillis()- tiempoUltimoDaño < tiempoInvencivilidad;
-	}
 
+	private boolean esInvecible(){
+		return System.currentTimeMillis()-tiempoUltimoDaño<tiempoInvencivilidad;
+	}
 
 	@Override
 	public long getDaño() {
@@ -146,19 +141,35 @@ public class Jugador extends Entidad {
 
 	@Override
 	public void moverse() {
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
-			this.flip = -1;
-		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
-			this.flip = 1;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
-		} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isKeyPressed(Input.Keys.A)||Gdx.input.isKeyPressed(Input.Keys.D)||Gdx.input.isKeyPressed(Input.Keys.S)||Gdx.input.isKeyPressed(Input.Keys.W)){
+			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+				hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
+				this.flip = -1;
+			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+				hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
+				this.flip = 1;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+				hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
+			} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+				hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
+			}
+			Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
+			if (flip == 1) {
+				frameactual.setFlip(false, false);
+			} else if (flip == -1) {
+				frameactual.setFlip(true, false);
+			}
+			sprite.setRegion(frameactual);
+		}else{
+			Sprite frame = new Sprite(spriteAnimationStatic.getKeyFrame(stateTime, true));
+			if (flip == 1) {
+				frame.setFlip(false, false);
+			} else if (flip == -1) {
+				frame.setFlip(true, false);
+			}
+			sprite.setRegion(frame);
 		}
 
 	}
-
 }

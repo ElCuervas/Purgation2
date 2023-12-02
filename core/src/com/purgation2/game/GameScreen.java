@@ -7,8 +7,11 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.*;
 public class GameScreen implements Screen {
@@ -22,6 +25,8 @@ public class GameScreen implements Screen {
 	Music SongMusic;
 	Jugador player1;
 	ArrayList<Enemigo> enemigos;
+	Animation<TextureRegion> animationEnemigo;
+	float stateTime;
 	ArrayList<Bala> balasJugador;
 	ArrayList<Bala> balasJefe;
 	ArrayList<minion> minions;
@@ -31,6 +36,7 @@ public class GameScreen implements Screen {
 	private double[] mejorasJefe;
 	private final float tiempoEntreGeneraciones = 10f;
 	private int cantidadEnemigosOleada=10;
+	private float tiempoEntreGeneracionEnemigo = 3f;
 	private float tiempoDesdeUltimaGeneracion;
 
 	public GameScreen(final Setup game){
@@ -43,10 +49,20 @@ public class GameScreen implements Screen {
 		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
 
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0),10);
+			}
+		},0,5);
 
 		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("Player.png")));
+
+		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,(Texture) asset.get("Player.png"));
 		player1.setVelocidad(900);
+
 		enemigos=new ArrayList<>();
+		stateTime=0f;
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
 		mapa.setPosition(0,0);
@@ -73,6 +89,8 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 		handleInput();
+		stateTime+=Gdx.graphics.getDeltaTime();
+
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
 
@@ -84,7 +102,6 @@ public class GameScreen implements Screen {
 			enemigo.renderizar(game.batch);
 			enemigo.atacar((Texture) asset.get("bala.png"));
 		}
-
 		game.batch.end();
 		limiteMapa();
 
@@ -93,20 +110,14 @@ public class GameScreen implements Screen {
 			Enemigo enemigoActivo = iterEnemigos.next();
 			enemigoActivo.recibirDaño(player1);
 			if (enemigoActivo.getVida() <= 0) {
+				DeadSound.play();
+				iterEnemigos.remove();
+			} else if (enemigoActivo.hitBox.x<0||enemigoActivo.hitBox.x>5000||enemigoActivo.hitBox.y<0||enemigoActivo.hitBox.y>5000) {
 				iterEnemigos.remove();
 			}
 		}
-
-		if (tiempoDesdeUltimaGeneracion <= 0) {
-			generarEnemigo((Texture) asset.get("enemigo.png"), cantidadEnemigosOleada);
-			tiempoDesdeUltimaGeneracion = tiempoEntreGeneraciones;
-		} else {
-			tiempoDesdeUltimaGeneracion -= delta;
-		}
 	}
-
 	public void limiteMapa() {
-
 		if (player1.hitBox.x < 0)
 			player1.hitBox.x = 0;
 		if (player1.hitBox.x > 5000 - player1.hitBox.width)
@@ -125,8 +136,9 @@ public class GameScreen implements Screen {
 		if (camera.position.y > 5000 - player1.hitBox.height)
 			camera.position.y = 5000 - player1.hitBox.height;
 	}
-
-
+	public long tiempoActual() {
+		return System.currentTimeMillis();
+	}
 	@Override
 	public void resize(int width, int height) {
 		camera.viewportWidth = 40f;
@@ -141,36 +153,35 @@ public class GameScreen implements Screen {
 	public void pause() {
 
 	}
-
 	@Override
 	public void resume() {
 
 	}
-
 	@Override
 	public void hide() {
 
 	}
-
 	@Override
 	public void dispose() {
 		asset.dispose();
 		DeadSound.dispose();
 	}
-
-
-
-
-
-
-	public void generarEnemigo(Texture enemigoTexture, int cantidadEnemigos) {
+	public void generarEnemigo(Animation<TextureRegion> animation, int cantidadEnemigos) {
 		for (int i = 0; i < cantidadEnemigos; i++) {
-			long margenSpawn=2000;
-			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX(margenSpawn), crearCordenadaY(margenSpawn), 64 * 3, 64 * 3, enemigoTexture, player1);
+			int spawn = MathUtils.random(-1600, 800);
+			float spawnX;
+			float spawnY;
+			if(spawn<0){
+				spawnX = player1.hitBox.x + spawn-800;
+				spawnY = player1.hitBox.y + spawn-800;
+			}else{
+				spawnX = player1.hitBox.x + spawn+800;
+				spawnY = player1.hitBox.y + spawn+800;
+			}
+			Enemigo nuevoEnemigo = new Enemigo(spawnX, spawnY, 64 * 3, 64 * 3, player1,animation);
 			enemigos.add(nuevoEnemigo);
 		}
 	}
-
 	private float crearCordenadaX(long margen) {
 		float spawnX;
 		do {
@@ -223,5 +234,15 @@ public class GameScreen implements Screen {
 		}
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
+	}
+	public Animation<TextureRegion> animador(Texture imagen, int cantframe, float fotogramas,int comienzoframe){
+		TextureRegion[][] tmp = TextureRegion.split(imagen,imagen.getWidth()/cantframe, imagen.getHeight());
+		TextureRegion[] animation = new TextureRegion[cantframe];
+		int index=0;
+		for (int i = comienzoframe; i < cantframe; i++) {
+			animation[index++]=tmp[0][i];
+		}
+		Animation<TextureRegion> animationfinal = new Animation<>(fotogramas,animation);
+		return animationfinal;
 	}
 }

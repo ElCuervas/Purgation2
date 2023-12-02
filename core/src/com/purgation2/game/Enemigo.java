@@ -3,6 +3,10 @@ package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.Iterator;
 
@@ -10,15 +14,21 @@ import java.util.Iterator;
 public class Enemigo extends Entidad {
     private double probabilidadAtaque;
     private Jugador target;
+    Animation<TextureRegion> animation;
+    float stateTime;
 
-    public Enemigo(float x, float y, float width, float height, Texture image, Jugador player) {
-        super(x, y, width, height, image);
+    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation) {
+        super(x, y, width, height);
+        this.animation=animation;
         this.target = player;
         this.velocidad = 300;
-        probabilidadAtaque=0;
+        probabilidadAtaque=0.001;
+        stateTime=0f;
     }
     public void renderizar(SpriteBatch batch) {
-        batch.draw(textura, hitBox.x, hitBox.y, hitBox.width*2,hitBox.height*2);
+        stateTime+=Gdx.graphics.getDeltaTime();
+        Sprite frame = new Sprite(animation.getKeyFrame(stateTime, true));
+        batch.draw(frame, hitBox.x, hitBox.y,hitBox.width*2, hitBox.height*2);
         moverse();
         barravida.dibujarBarraVida(batch);
 
@@ -64,7 +74,6 @@ public class Enemigo extends Entidad {
             }
         }
     }
-
     @Override
     public void atacar( Texture bala) {
         if (chanceAtacar()) {
