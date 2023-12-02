@@ -5,17 +5,23 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Bala extends Rectangle {
+	private long dañoBala;
 	private Sprite sprite;
 	private float velocidad;
 	private float angulo;
 	private boolean perforante;
 
-	public Bala(float x, float y, float targetX, float targetY,Texture bala) {
+	public Bala(float x, float y, float targetX, float targetY,Texture bala,long daño) {
 		super(x, y, 64, 64);
 		sprite = new Sprite(bala);
+		this.dañoBala=daño;
 		this.velocidad = 500;
 		angulo = MathUtils.atan2(targetY - y, targetX - x);
 		perforante=false;
+	}
+
+	public long getDañoBala() {
+		return dañoBala;
 	}
 
 	public boolean isPerforante() {

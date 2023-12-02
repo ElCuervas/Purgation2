@@ -10,10 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 
 public class Jugador extends Entidad {
@@ -21,6 +18,7 @@ public class Jugador extends Entidad {
 	private double probabilidadCritico;
 	private long dañoCritico;
 	private double regenacion;
+	private long tiempoInvencivilidad;
 	private long puntajeTotal;
 	public Sprite sprite;
 	private Animation<TextureRegion> spriteAnimation;
@@ -28,7 +26,7 @@ public class Jugador extends Entidad {
 	float stateTime;
 	private long tiempoUltimoAtaque;
 	private long cadenciaDisparo = 200;
-	private ArrayList<Bala> balasJugador;
+	private OrthographicCamera camaraJuego;
 	Sound soundbala;
 
 	private long flip=1;
@@ -39,6 +37,7 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		daño=10;
 		this.regenacion=1;
+		this.tiempoInvencivilidad=1;
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
@@ -58,9 +57,9 @@ public class Jugador extends Entidad {
 		stateTime=0f;
 
 		sprite.setSize(width, height);
-		balasJugador = new ArrayList<>();
 	}
-	public void renderizar( SpriteBatch batch) {
+	public void renderizar( SpriteBatch batch, OrthographicCamera camera,Texture texturaBala) {
+
 		sprite.setPosition(hitBox.x, hitBox.y);
 		sprite.setSize(hitBox.width, hitBox.height);
 		Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
@@ -71,12 +70,12 @@ public class Jugador extends Entidad {
 		}
 		sprite.setRegion(frameactual);
 		stateTime+=Gdx.graphics.getDeltaTime();
-		for (Bala bala : balasJugador) {
+		for (Bala bala : balasEntidad) {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
 		}
 		sprite.draw(batch);
 
-		Iterator<Bala> iter = balasJugador.iterator();
+		Iterator<Bala> iter = balasEntidad.iterator();
 		while (iter.hasNext()) {
 			Bala bala = iter.next();
 			bala.actualizar(Gdx.graphics.getDeltaTime());
@@ -84,25 +83,40 @@ public class Jugador extends Entidad {
 				iter.remove();
 			}
 		}
+		camaraJuego = camera;
+		moverse();
+		atacar(texturaBala);
+
 	}
 
 	@Override
-	public void atacar(OrthographicCamera camera, Texture balaTexture) {
+	public void atacar( Texture balaTexture) {
 		long tiempoActual = System.currentTimeMillis();
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
 			soundbala.play();
 			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos);
-			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture);
-			balasJugador.add(nuevaBala);
+			camaraJuego.unproject(touchPos);
+			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture,getDaño());
+			balasEntidad.add(nuevaBala);
 			nuevaBala.setVelocidad(nuevaBala.getVelocidad()+1000);
 		}
 	}
+	public void recibirDaño(Entidad enemigo) {
 
-	public ArrayList<Bala> getBalasJugador() {
-		return balasJugador;
+
+
+		Iterator<Bala> iterBalas = balasEntidad.iterator();
+		while (iterBalas.hasNext()) {
+			Bala proyectil = iterBalas.next();
+			if (proyectil.overlaps(hitBox)) {
+				vida -= enemigo.getDaño();
+					iterBalas.remove();
+			}
+		}
 	}
+
+
 
 	@Override
 	public long getDaño() {

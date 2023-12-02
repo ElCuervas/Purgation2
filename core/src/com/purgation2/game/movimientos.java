@@ -7,6 +7,7 @@ public interface movimientos {
 
 	void moverse();
 
-	void atacar(OrthographicCamera camera, Texture bala);
+	void atacar( Texture bala);
+	void recibirDaño(Entidad entidad);
 
 }

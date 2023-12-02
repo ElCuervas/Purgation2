@@ -78,10 +78,11 @@ public class GameScreen implements Screen {
 
 		borde.draw(game.batch);
 		mapa.draw(game.batch);
-		player1.renderizar(game.batch);//renderizado individual jugador
+		player1.renderizar(game.batch,camera,(Texture) asset.get("bala.png"));//renderizado individual jugador
 
 		for (Enemigo enemigo:enemigos) {//renderizado colectivo enemigos
 			enemigo.renderizar(game.batch);
+			enemigo.atacar((Texture) asset.get("bala.png"));
 		}
 
 		game.batch.end();
@@ -90,13 +91,11 @@ public class GameScreen implements Screen {
 		Iterator<Enemigo> iterEnemigos = enemigos.iterator();
 		while (iterEnemigos.hasNext()) {
 			Enemigo enemigoActivo = iterEnemigos.next();
-			enemigoActivo.recibirDaño();
+			enemigoActivo.recibirDaño(player1);
 			if (enemigoActivo.getVida() <= 0) {
 				iterEnemigos.remove();
 			}
 		}
-		player1.moverse();
-		player1.atacar(camera,(Texture) asset.get("bala.png"));
 
 		if (tiempoDesdeUltimaGeneracion <= 0) {
 			generarEnemigo((Texture) asset.get("enemigo.png"), cantidadEnemigosOleada);
@@ -106,7 +105,7 @@ public class GameScreen implements Screen {
 		}
 	}
 
-	private void limiteMapa() {
+	public void limiteMapa() {
 
 		if (player1.hitBox.x < 0)
 			player1.hitBox.x = 0;

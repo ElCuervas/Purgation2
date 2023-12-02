@@ -3,13 +3,16 @@ package com.purgation2.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
+
 public abstract class Entidad implements movimientos {
-	private BarraDeVida barravida;
+	protected BarraDeVida barravida;
 	Rectangle hitBox;
 	protected long vida;
 	protected long daño;
 	protected long velocidad;
 	protected Texture textura;
+	protected ArrayList<Bala> balasEntidad;
 
 	public Entidad(float x, float y, float width, float height,Texture image) {
 		hitBox=new Rectangle(x,y,width,height);
@@ -18,10 +21,7 @@ public abstract class Entidad implements movimientos {
 		this.daño = 10;
 		this.velocidad = 100;
 		barravida = new BarraDeVida(this);
-	}
-
-	public BarraDeVida getBarravida() {
-		return barravida;
+		balasEntidad = new ArrayList<>();
 	}
 
 	public long getVida() {
