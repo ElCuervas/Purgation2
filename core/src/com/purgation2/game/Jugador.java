@@ -41,8 +41,8 @@ public class Jugador extends Entidad {
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
-
 		tiempoUltimoAtaque = 0;
+
 		sprite=new Sprite(textura);
 		textureAnimation = new Texture(Gdx.files.internal("Player_animation.png"));
 		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/4, textureAnimation.getHeight());
@@ -121,6 +121,7 @@ public class Jugador extends Entidad {
 		} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
 		}
+
 	}
 
 }

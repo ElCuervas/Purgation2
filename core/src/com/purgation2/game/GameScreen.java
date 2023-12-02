@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.*;
 public class GameScreen implements Screen {
@@ -43,6 +41,7 @@ public class GameScreen implements Screen {
 		asset.load("Player.png",Texture.class);
 		asset.load("enemigo.png", Texture.class);
 		asset.load("bala.png",Texture.class);
+		asset.load("barra vida.png",Texture.class);
 		asset.finishLoading();
 
 
@@ -87,26 +86,7 @@ public class GameScreen implements Screen {
 		}
 
 		game.batch.end();
-
-		if (player1.hitBox.x < 0)
-			player1.hitBox.x = 0;
-		if (player1.hitBox.x > 5000 - player1.hitBox.width)
-			player1.hitBox.x = 5000 - player1.hitBox.width;
-		if (player1.hitBox.y < 0)
-			player1.hitBox.y = 0;
-		if (player1.hitBox.y > 5000 - player1.hitBox.height)
-			player1.hitBox.y = 5000 - player1.hitBox.height;
-
-
-
-		if (camera.position.x < 0)
-			camera.position.x = 0;
-		if (camera.position.x > 5000 - player1.hitBox.width)
-			camera.position.x = 5000 - player1.hitBox.width;
-		if (camera.position.y < 0)
-			camera.position.y = 0;
-		if (camera.position.y > 5000 - player1.hitBox.height)
-			camera.position.y = 5000 - player1.hitBox.height;
+		limiteMapa();
 
 		Iterator<Enemigo> iterEnemigos = enemigos.iterator();
 		while (iterEnemigos.hasNext()) {
@@ -127,6 +107,26 @@ public class GameScreen implements Screen {
 		}
 	}
 
+	private void limiteMapa() {
+
+		if (player1.hitBox.x < 0)
+			player1.hitBox.x = 0;
+		if (player1.hitBox.x > 5000 - player1.hitBox.width)
+			player1.hitBox.x = 5000 - player1.hitBox.width;
+		if (player1.hitBox.y < 0)
+			player1.hitBox.y = 0;
+		if (player1.hitBox.y > 5000 - player1.hitBox.height)
+			player1.hitBox.y = 5000 - player1.hitBox.height;
+
+		if (camera.position.x < 0)
+			camera.position.x = 0;
+		if (camera.position.x > 5000 - player1.hitBox.width)
+			camera.position.x = 5000 - player1.hitBox.width;
+		if (camera.position.y < 0)
+			camera.position.y = 0;
+		if (camera.position.y > 5000 - player1.hitBox.height)
+			camera.position.y = 5000 - player1.hitBox.height;
+	}
 
 
 	@Override

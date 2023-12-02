@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
 public abstract class Entidad implements movimientos {
+	private BarraDeVida barravida;
 	Rectangle hitBox;
 	protected long vida;
 	protected long daño;
@@ -16,6 +17,9 @@ public abstract class Entidad implements movimientos {
 		this.vida = 100;
 		this.daño = 10;
 		this.velocidad = 100;
+		barravida = new BarraDeVida(this);
+	}
+	public void dibujarBarraVida() {
 	}
 
 	public long getVida() {

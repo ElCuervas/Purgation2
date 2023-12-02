@@ -15,6 +15,7 @@ public class Enemigo extends Entidad {
         this.target = player;
         this.velocidad = 300;
     }
+
     @Override
     public void moverse() {
         float deltaX = target.hitBox.x - hitBox.x;
@@ -25,10 +26,11 @@ public class Enemigo extends Entidad {
             deltaX /= length;
             deltaY /= length;
         }
-        hitBox.x+= deltaX * velocidad * Gdx.graphics.getDeltaTime();
-        hitBox.y+= deltaY * velocidad * Gdx.graphics.getDeltaTime();
+        hitBox.x += deltaX * velocidad * Gdx.graphics.getDeltaTime();
+        hitBox.y += deltaY * velocidad * Gdx.graphics.getDeltaTime();
 
     }
+
     public void recibirDaño() {
         Iterator<Bala> iterBalas = target.getBalasJugador().iterator();
         while (iterBalas.hasNext()) {
