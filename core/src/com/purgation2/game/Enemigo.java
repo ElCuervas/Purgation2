@@ -15,7 +15,7 @@ public class Enemigo extends Entidad {
         super(x, y, width, height, image);
         this.target = player;
         this.velocidad = 300;
-        probabilidadAtaque=0.001;
+        probabilidadAtaque=0;
     }
     public void renderizar(SpriteBatch batch) {
         batch.draw(textura, hitBox.x, hitBox.y, hitBox.width*2,hitBox.height*2);
@@ -64,6 +64,7 @@ public class Enemigo extends Entidad {
             }
         }
     }
+
     @Override
     public void atacar( Texture bala) {
         if (chanceAtacar()) {
@@ -71,6 +72,7 @@ public class Enemigo extends Entidad {
             nuevaBala.setVelocidad(nuevaBala.getVelocidad() + 500);
             balasEntidad.add(nuevaBala);
         }
+        target.recibirDaño(this);
     }
     private boolean chanceAtacar() {
         double probabilidad = Math.random();

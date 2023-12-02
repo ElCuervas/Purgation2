@@ -19,6 +19,7 @@ public class Jugador extends Entidad {
 	private long dañoCritico;
 	private double regenacion;
 	private long tiempoInvencivilidad;
+	private long tiempoUltimoDaño = 0;
 	private long puntajeTotal;
 	public Sprite sprite;
 	private Animation<TextureRegion> spriteAnimation;
@@ -37,7 +38,7 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		daño=10;
 		this.regenacion=1;
-		this.tiempoInvencivilidad=1;
+		this.tiempoInvencivilidad=1000;
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
@@ -86,6 +87,7 @@ public class Jugador extends Entidad {
 		camaraJuego = camera;
 		moverse();
 		atacar(texturaBala);
+		barravida.dibujarBarraVida(batch);
 
 	}
 
@@ -102,20 +104,30 @@ public class Jugador extends Entidad {
 			nuevaBala.setVelocidad(nuevaBala.getVelocidad()+1000);
 		}
 	}
+
+	@Override
 	public void recibirDaño(Entidad enemigo) {
+		//recibir daño si el enemigo lo toca
 
+		if (enemigo.hitBox.overlaps(hitBox)&& !esInvencible()){
+			vida-=enemigo.getDaño();
+			tiempoUltimoDaño = System.currentTimeMillis();
+		}
 
-
-		Iterator<Bala> iterBalas = balasEntidad.iterator();
+		//recibir daño si una bala lo toca
+		Iterator<Bala> iterBalas = enemigo.balasEntidad.iterator();
 		while (iterBalas.hasNext()) {
 			Bala proyectil = iterBalas.next();
 			if (proyectil.overlaps(hitBox)) {
-				vida -= enemigo.getDaño();
+				vida -= proyectil.getDañoBala();
 					iterBalas.remove();
 			}
 		}
 	}
 
+	private boolean esInvencible() {
+		return System.currentTimeMillis()- tiempoUltimoDaño < tiempoInvencivilidad;
+	}
 
 
 	@Override
