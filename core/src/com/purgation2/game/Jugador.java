@@ -26,7 +26,7 @@ public class Jugador extends Entidad {
 	private Texture textureAnimation;
 	float stateTime;
 	private long tiempoUltimoAtaque;
-	private long cadenciaDisparo = 500;
+	private long cadenciaDisparo = 100;
 	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
 
@@ -36,7 +36,7 @@ public class Jugador extends Entidad {
 		super(x, y, width, height, image);
 		this.probabilidadCritico=0;
 		this.dañoCritico=2;
-		daño=50;
+		daño=10;
 		this.regenacion=1;
 		this.puntajeTotal=0;
 

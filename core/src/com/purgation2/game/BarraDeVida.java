@@ -22,10 +22,21 @@ public class BarraDeVida {
     }
 
     public void dibujarBarraVida(Batch batch) {
+        double vidaPorcentaje = 100*(double) entidad.vida / maxVida;
+        int corazon=5;
         if (entidad.vida < maxVida) {
-            double vidaPorcentaje = (double) entidad.vida / maxVida;
-            int corazon=0;
-            batch.draw(vidaActual[corazon], entidad.hitBox.x, entidad.hitBox.y + entidad.hitBox.height, entidad.hitBox.width, 5);
+            if (vidaPorcentaje>=83.2){
+                corazon=0;
+            } else if (vidaPorcentaje<83.2 && vidaPorcentaje>=66.6) {
+                corazon=1;
+            } else if (vidaPorcentaje<66.6 && vidaPorcentaje>=50) {
+                corazon=2;
+            } else if (vidaPorcentaje<50 && vidaPorcentaje>=33.3) {
+                corazon=3;
+            } else if (vidaPorcentaje<33.3 && vidaPorcentaje>=16.6) {
+                corazon=4;
+            }
+            batch.draw(vidaActual[corazon], entidad.hitBox.x+entidad.hitBox.height/2, entidad.hitBox.y + entidad.hitBox.height, entidad.hitBox.width/2, entidad.hitBox.height/2);
         }
     }
 }

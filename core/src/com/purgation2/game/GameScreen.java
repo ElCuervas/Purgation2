@@ -80,7 +80,7 @@ public class GameScreen implements Screen {
 		mapa.draw(game.batch);
 		player1.renderizar(game.batch);//renderizado individual
 		for (Enemigo enemigo:enemigos) {
-			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width*2, enemigo.hitBox.height*2);
+			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width, enemigo.hitBox.height);
 			enemigo.moverse();
 			enemigo.getBarravida().dibujarBarraVida(game.batch);
 		}
