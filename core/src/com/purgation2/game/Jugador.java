@@ -20,13 +20,13 @@ public class Jugador extends Entidad {
 	private double probabilidadCritico;
 	private long dañoCritico;
 	private double regenacion;
-	private long tiempoInvencivilidad=1000;
+	private long tiempoInvencivilidad;
 	private long tiempoUltimoDaño=1000;
 	private long puntajeTotal;
 	public Sprite sprite;
 	private Animation<TextureRegion> spriteAnimation;
 	private Animation<TextureRegion> spriteAnimationStatic;
-
+	private float tiempoParpadeo;
 	private Texture textureAnimation;
 	float stateTime;
 	private long tiempoUltimoAtaque;
@@ -43,7 +43,7 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		this.daño=10;
 		this.regenacion=1;
-		this.tiempoInvencivilidad=1;
+		this.tiempoInvencivilidad=1000;
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
@@ -76,6 +76,10 @@ public class Jugador extends Entidad {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
 		}
 		sprite.draw(batch);
+
+		if(esInvecible()){
+			pestañeo();
+		}
 
 		Iterator<Bala> iter = balasEntidad.iterator();
 		while (iter.hasNext()) {
@@ -124,7 +128,19 @@ public class Jugador extends Entidad {
 	private boolean esInvecible(){
 		return System.currentTimeMillis()-tiempoUltimoDaño<tiempoInvencivilidad;
 	}
-
+	private void pestañeo() {
+		if (tiempoParpadeo <= 5.0f) {
+			if (tiempoParpadeo % 0.5f < 0.25f) {
+				sprite.setColor(1, 1, 1, 0.5f);
+			} else {
+				sprite.setColor(1, 1, 1, 1);
+			}
+			tiempoParpadeo += Gdx.graphics.getDeltaTime();
+		} else {
+			sprite.setColor(1, 1, 1, 1);
+			tiempoParpadeo = 0;
+		}
+	}
 	@Override
 	public long getDaño() {
 		return dañoJugador();
