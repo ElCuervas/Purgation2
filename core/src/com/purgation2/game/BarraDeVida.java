@@ -2,7 +2,10 @@ package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import java.util.Arrays;
 
 public class BarraDeVida {
 
@@ -14,16 +17,16 @@ public class BarraDeVida {
         this.entidad = entidad;
         this.maxVida = entidad.vida;
         textureAnimation = new Texture(Gdx.files.internal("barra vida.png"));
-
         TextureRegion[][] tmp = TextureRegion.split(textureAnimation, textureAnimation.getWidth() / 6, textureAnimation.getHeight());
         vidaActual = new TextureRegion[6];
         System.arraycopy(tmp[0], 0, vidaActual, 0, 6);
-
     }
 
     public void dibujarBarraVida(Batch batch) {
         double vidaPorcentaje = 100*(double) entidad.vida / maxVida;
         int corazon=5;
+        float x =entidad.hitBox.x+entidad.hitBox.height/2;
+        float y =entidad.hitBox.y + entidad.hitBox.height;
         if (entidad.vida < maxVida) {
             if (vidaPorcentaje>=83.2){
                 corazon=0;
@@ -36,7 +39,7 @@ public class BarraDeVida {
             } else if (vidaPorcentaje<33.3 && vidaPorcentaje>=16.6) {
                 corazon=4;
             }
-            batch.draw(vidaActual[corazon], entidad.hitBox.x+entidad.hitBox.height/2, entidad.hitBox.y + entidad.hitBox.height, entidad.hitBox.width/2, entidad.hitBox.height/2);
+            batch.draw(vidaActual[corazon], x, y, entidad.hitBox.width/2, entidad.hitBox.height/2);
         }
     }
 }

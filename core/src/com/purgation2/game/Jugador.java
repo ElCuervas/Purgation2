@@ -36,7 +36,7 @@ public class Jugador extends Entidad {
 	private OrthographicCamera camaraJuego;
 	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
-
+	Sound dashsound;
 	private long flip=1;
 	private long dashkey=0;
 
@@ -44,12 +44,15 @@ public class Jugador extends Entidad {
 		super(x, y, width, height);
 		this.probabilidadCritico=0.1;
 		this.dañoCritico=2;
-		this.daño=10;
+		this.daño=20;
 		this.regenacion=1;
 		this.tiempoInvencivilidad=2000;
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
+		dashsound=Gdx.audio.newSound(Gdx.files.internal("dash.ogg"));
+		dashsound.setVolume(1,4f);
+
 		tiempoUltimoAtaque = 0;
 		tiempoUltimoDash = 0;
 		sprite=new Sprite(image);
@@ -80,6 +83,7 @@ public class Jugador extends Entidad {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
 		}
 		sprite.draw(batch);
+		barravida.dibujarBarraVida(batch);
 
 		if(esInvecible()){
 			pestañeo();
@@ -97,7 +101,6 @@ public class Jugador extends Entidad {
 		dash();
 		moverse();
 		atacar(texturaBala);
-		barravida.dibujarBarraVida(batch);
 	}
 
 	@Override
@@ -198,19 +201,23 @@ public class Jugador extends Entidad {
 
 	}
 	public void dash(){
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && !(System.currentTimeMillis() - tiempoUltimoDash < tiempoDash)) { //dash
+		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !(System.currentTimeMillis() - tiempoUltimoDash < tiempoDash)) { //dash
 			//Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
 			if (dashkey == 1) {
 				hitBox.x += 400;
+				camaraJuego.translate(400,0);
+
 				//frameactual.setFlip(false, false);
 			} else if (dashkey == -1) {
 				hitBox.x -= 400;
+				camaraJuego.translate(-400,0);
 				//frameactual.setFlip(true, false);
 			} else if (dashkey== 2 ) {
 				hitBox.y += 400;
 			} else if (dashkey == -2) {
 				hitBox.y -= 400;
 			}
+			dashsound.play();
 			tiempoUltimoDash=System.currentTimeMillis();
 		}
 	}
