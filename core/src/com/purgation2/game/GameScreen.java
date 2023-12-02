@@ -41,11 +41,10 @@ public class GameScreen implements Screen {
 		asset.load("Player.png",Texture.class);
 		asset.load("enemigo.png", Texture.class);
 		asset.load("bala.png",Texture.class);
-		asset.load("barra vida.png",Texture.class);
 		asset.finishLoading();
 
 
-		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,(64*3),64*3,((Texture) asset.get("Player.png")));
+		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("Player.png")));
 		player1.setVelocidad(900);
 		enemigos=new ArrayList<>();
 
@@ -83,6 +82,7 @@ public class GameScreen implements Screen {
 		for (Enemigo enemigo:enemigos) {
 			game.batch.draw(enemigo.textura, enemigo.hitBox.x, enemigo.hitBox.y, enemigo.hitBox.width*2, enemigo.hitBox.height*2);
 			enemigo.moverse();
+			enemigo.getBarravida().dibujarBarraVida(game.batch);
 		}
 
 		game.batch.end();

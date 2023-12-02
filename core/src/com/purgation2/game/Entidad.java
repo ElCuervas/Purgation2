@@ -19,7 +19,9 @@ public abstract class Entidad implements movimientos {
 		this.velocidad = 100;
 		barravida = new BarraDeVida(this);
 	}
-	public void dibujarBarraVida() {
+
+	public BarraDeVida getBarravida() {
+		return barravida;
 	}
 
 	public long getVida() {
