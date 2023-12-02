@@ -22,6 +22,8 @@ public class Jugador extends Entidad {
 	private double regenacion;
 	private long tiempoInvencivilidad;
 	private long tiempoUltimoDaño=1000;
+	private long tiempoUltimoDash;
+	private long tiempoDash=400;
 	private long puntajeTotal;
 	public Sprite sprite;
 	private Animation<TextureRegion> spriteAnimation;
@@ -36,6 +38,7 @@ public class Jugador extends Entidad {
 	Sound soundbala;
 
 	private long flip=1;
+	private long dashkey=0;
 
 	public Jugador(float x, float y, float width, float height, Texture image) {
 		super(x, y, width, height);
@@ -43,11 +46,12 @@ public class Jugador extends Entidad {
 		this.dañoCritico=2;
 		this.daño=10;
 		this.regenacion=1;
-		this.tiempoInvencivilidad=1000;
+		this.tiempoInvencivilidad=2000;
 		this.puntajeTotal=0;
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		tiempoUltimoAtaque = 0;
+		tiempoUltimoDash = 0;
 		sprite=new Sprite(image);
 		textureAnimation=image;
 		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/6, textureAnimation.getHeight());
@@ -90,6 +94,7 @@ public class Jugador extends Entidad {
 			}
 		}
 		camaraJuego = camera;
+		dash();
 		moverse();
 		atacar(texturaBala);
 		barravida.dibujarBarraVida(batch);
@@ -117,15 +122,15 @@ public class Jugador extends Entidad {
 		Iterator<Bala> iterBalas = enemigo.balasEntidad.iterator();
 		while (iterBalas.hasNext()) {
 			Bala proyectil = iterBalas.next();
-			if (proyectil.overlaps(hitBox)) {
+			if (proyectil.overlaps(hitBox)&& !esInvecible()) {
 				vida -= proyectil.getDañoBala();
+				tiempoUltimoDaño=System.currentTimeMillis();
 				iterBalas.remove();
 			}
 		}
 	}
 
-
-	private boolean esInvecible(){
+	public boolean esInvecible(){
 		return System.currentTimeMillis()-tiempoUltimoDaño<tiempoInvencivilidad;
 	}
 	private void pestañeo() {
@@ -161,14 +166,18 @@ public class Jugador extends Entidad {
 			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 				hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
 				this.flip = -1;
+				this.dashkey=-1;
 			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 				hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
 				this.flip = 1;
+				this.dashkey=1;
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 				hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
+				this.dashkey=-2;
 			} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 				hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
+				this.dashkey=2;
 			}
 			Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
 			if (flip == 1) {
@@ -187,5 +196,22 @@ public class Jugador extends Entidad {
 			sprite.setRegion(frame);
 		}
 
+	}
+	public void dash(){
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && !(System.currentTimeMillis() - tiempoUltimoDash < tiempoDash)) { //dash
+			//Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
+			if (dashkey == 1) {
+				hitBox.x += 400;
+				//frameactual.setFlip(false, false);
+			} else if (dashkey == -1) {
+				hitBox.x -= 400;
+				//frameactual.setFlip(true, false);
+			} else if (dashkey== 2 ) {
+				hitBox.y += 400;
+			} else if (dashkey == -2) {
+				hitBox.y -= 400;
+			}
+			tiempoUltimoDash=System.currentTimeMillis();
+		}
 	}
 }

@@ -11,7 +11,6 @@ public abstract class Entidad implements movimientos {
 	protected long vida;
 	protected long daño;
 	protected long velocidad;
-	protected Texture textura;
 	protected ArrayList<Bala> balasEntidad;
 
 	public Entidad(float x, float y, float width, float height) {

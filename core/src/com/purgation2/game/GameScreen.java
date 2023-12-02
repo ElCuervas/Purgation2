@@ -136,9 +136,6 @@ public class GameScreen implements Screen {
 		if (camera.position.y > 5000 - player1.hitBox.height)
 			camera.position.y = 5000 - player1.hitBox.height;
 	}
-	public long tiempoActual() {
-		return System.currentTimeMillis();
-	}
 	@Override
 	public void resize(int width, int height) {
 		camera.viewportWidth = 40f;
