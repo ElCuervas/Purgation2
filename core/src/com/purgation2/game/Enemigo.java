@@ -3,6 +3,7 @@ package com.purgation2.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Iterator;
 
@@ -14,6 +15,11 @@ public class Enemigo extends Entidad {
         super(x, y, width, height, image);
         this.target = player;
         this.velocidad = 300;
+    }
+    public void renderizar(SpriteBatch batch) {
+        batch.draw(textura, hitBox.x, hitBox.y, hitBox.width*2,hitBox.height*2);
+        moverse();
+        getBarravida().dibujarBarraVida(batch);
     }
 
     @Override

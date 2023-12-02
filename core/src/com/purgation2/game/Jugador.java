@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 
 public class Jugador extends Entidad {
@@ -26,7 +27,7 @@ public class Jugador extends Entidad {
 	private Texture textureAnimation;
 	float stateTime;
 	private long tiempoUltimoAtaque;
-	private long cadenciaDisparo = 100;
+	private long cadenciaDisparo = 200;
 	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
 
@@ -34,7 +35,7 @@ public class Jugador extends Entidad {
 
 	public Jugador(float x, float y, float width, float height, Texture image) {
 		super(x, y, width, height, image);
-		this.probabilidadCritico=0;
+		this.probabilidadCritico=0.1;
 		this.dañoCritico=2;
 		daño=10;
 		this.regenacion=1;
@@ -103,8 +104,18 @@ public class Jugador extends Entidad {
 		return balasJugador;
 	}
 
-	public void removerBala(Bala bala) {
-		balasJugador.remove(bala);
+	@Override
+	public long getDaño() {
+		return dañoJugador();
+	}
+
+	private long dañoJugador() {
+		double probabilidad = Math.random();
+		if (probabilidad < probabilidadCritico) {
+			return (super.getDaño() * dañoCritico);
+		} else {
+			return super.getDaño();
+		}
 	}
 
 	@Override
