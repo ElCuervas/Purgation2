@@ -41,6 +41,7 @@ public class GameScreen implements Screen {
 		asset.load("Player.png",Texture.class);
 		asset.load("enemigo.png", Texture.class);
 		asset.load("bala.png",Texture.class);
+		asset.load("jefe.png",Texture.class);
 		asset.finishLoading();
 		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),100);
 		enemigos=new ArrayList<>();
@@ -56,7 +57,7 @@ public class GameScreen implements Screen {
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
-				generarJefe(animador((Texture) asset.get("enemigo.png"),3,0.2f,0));
+				generarJefe(animador((Texture) asset.get("jefe.png"),4,0.1f,0));
 			}
 		},10,mejorasJefe[4]);
 		Timer.schedule(new Timer.Task() {
