@@ -42,7 +42,7 @@ public class GameScreen implements Screen {
 		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
 
-		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")));
+		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),100);
 		enemigos=new ArrayList<>();
 		jefes= new ArrayList<>();
 		mejoras = new Mejoras(player1);
@@ -195,13 +195,13 @@ public class GameScreen implements Screen {
 	public void generarEnemigo(Animation<TextureRegion> animation, long cantidadEnemigos) {
 		for (long i = 0; i < cantidadEnemigos; i++) {
 			int margen = 1000;
-			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,100);
 			enemigos.add(nuevoEnemigo);
 		}
 	}
 	public void generarJefe(Animation<TextureRegion> animation) {
 		int margen = 1000;
-		Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+		Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,400);
 		jefes.add(jefe);
 	}
 	private float crearCordenadaX(int margen) {

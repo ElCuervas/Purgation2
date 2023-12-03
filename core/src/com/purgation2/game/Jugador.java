@@ -26,6 +26,9 @@ public class Jugador extends Entidad {
 	public Sprite sprite;
 	private Animation<TextureRegion> spriteAnimation;
 	private Animation<TextureRegion> spriteAnimationStatic;
+	private Animation<TextureRegion> dashAnimation;
+	private Animation<TextureRegion> dashupAnimation;
+	private Animation<TextureRegion> dashdownAnimation;
 	private float tiempoParpadeo;
 	private Texture textureAnimation;
 	float stateTime;
@@ -37,8 +40,8 @@ public class Jugador extends Entidad {
 	private long flip=1;
 	private long dashkey=0;
 
-	public Jugador(float x, float y, float width, float height, Texture image) {
-		super(x, y, width, height);
+	public Jugador(float x, float y, float width, float height, Texture image,long vida) {
+		super(x, y, width, height,vida);
 		this.probabilidadCritico=0.02;
 		this.dañoCritico=2;
 		this.daño=20;
@@ -58,33 +61,51 @@ public class Jugador extends Entidad {
 		tiempoUltimoDash = 0;
 		sprite=new Sprite(image);
 		textureAnimation=image;
-		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/6, textureAnimation.getHeight());
+		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/14, textureAnimation.getHeight());
 		TextureRegion[] animation = new TextureRegion[4];
 		TextureRegion[] animationStatic = new TextureRegion[2];
+		TextureRegion[] dash = new TextureRegion[3];
+		TextureRegion[] dashup = new TextureRegion[3];
+		TextureRegion[] dashDown = new TextureRegion[3];
 		int index=0;
 		for (int i = 0; i < 4; i++) {
 			animation[index++]=tmp[0][i];
 		}
-		int index2=0;
-		for (int i = 4; i < 6; i++) {
-			animationStatic[index2++]=tmp[0][i];
+		index=0;
+		for (int i = 3; i < 5; i++) {
+			animationStatic[index++]=tmp[0][i];
+		}
+		index=0;
+		for (int i = 5; i <8; i++) {
+			dash[index++]=tmp[0][i];
+		}
+		index=0;
+		for (int i = 8; i < 11; i++) {
+			dashup[index++]=tmp[0][i];
+		}
+		index=0;
+		for (int i = 11; i < 14; i++) {
+			dashDown[index++]=tmp[0][i];
 		}
 		spriteAnimation = new Animation<>(0.15f, animation);
 		spriteAnimationStatic = new Animation<>(0.4f,animationStatic);
+		dashAnimation = new Animation<>(0.7f,dash);
+		dashupAnimation = new Animation<>(0.7f,dashup);
+		dashdownAnimation = new Animation<>(0.7f,dashDown);
 		stateTime=0f;
 
 		sprite.setSize(width, height);
 	}
 	public void mejorarEstadisticas( long[] estadisticasAdicionales) {
 		mejorasJugador=estadisticasAdicionales;
-		vida+=mejorasJugador[0];
-		regenacion+=mejorasJugador[1];
-		daño+=mejorasJugador[2];
-		probabilidadCritico+= (double) mejorasJugador[3] /100;
-		dañoCritico+=mejorasJugador[4];
-		tiempoInvencivilidad+=mejorasJugador[5];
-		velocidad+=mejorasJugador[6];
-		cadenciaDisparo-= mejorasJugador[8];
+		this.vida+=mejorasJugador[0];
+		this.regenacion+=mejorasJugador[1];
+		this.daño+=mejorasJugador[2];
+		this.probabilidadCritico+= (double) mejorasJugador[3] /100;
+		this.dañoCritico+=mejorasJugador[4];
+		this.tiempoInvencivilidad+=mejorasJugador[5];
+		this.velocidad+=mejorasJugador[6];
+		this.cadenciaDisparo-= mejorasJugador[8];
 	}
 	public void renderizar( SpriteBatch batch, OrthographicCamera camera,Texture texturaBala) {
 
@@ -99,6 +120,8 @@ public class Jugador extends Entidad {
 
 		if(esInvecible()){
 			pestañeo();
+		}else{
+			sprite.setColor(1,1,1,1);
 		}
 
 		Iterator<Bala> iter = balasEntidad.iterator();
@@ -110,7 +133,6 @@ public class Jugador extends Entidad {
 			}
 		}
 		camaraJuego = camera;
-		dash();
 		moverse();
 		atacar(texturaBala);
 	}
@@ -185,57 +207,65 @@ public class Jugador extends Entidad {
 
 	@Override
 	public void moverse() {
-		if(Gdx.input.isKeyPressed(Input.Keys.A)||Gdx.input.isKeyPressed(Input.Keys.D)||Gdx.input.isKeyPressed(Input.Keys.S)||Gdx.input.isKeyPressed(Input.Keys.W)){
-			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-				hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
-				this.flip = -1;
-				this.dashkey=-1;
-			} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-				hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
-				this.flip = 1;
-				this.dashkey=1;
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-				hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
-				this.dashkey=-2;
-			} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-				hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
-				this.dashkey=2;
-			}
-			Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
-			if (flip == 1) {
-				frameactual.setFlip(false, false);
-			} else if (flip == -1) {
-				frameactual.setFlip(true, false);
-			}
-			sprite.setRegion(frameactual);
+		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
+			dash();
 		}else{
-			Sprite frame = new Sprite(spriteAnimationStatic.getKeyFrame(stateTime, true));
-			if (flip == 1) {
-				frame.setFlip(false, false);
-			} else if (flip == -1) {
-				frame.setFlip(true, false);
+			if(Gdx.input.isKeyPressed(Input.Keys.A)||Gdx.input.isKeyPressed(Input.Keys.D)||Gdx.input.isKeyPressed(Input.Keys.S)||Gdx.input.isKeyPressed(Input.Keys.W)){
+				if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+					hitBox.x -= this.velocidad * Gdx.graphics.getDeltaTime();
+					this.flip = -1;
+					this.dashkey=-1;
+				} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+					hitBox.x += this.velocidad * Gdx.graphics.getDeltaTime();
+					this.flip = 1;
+					this.dashkey=1;
+				}
+				if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+					hitBox.y -= this.velocidad * Gdx.graphics.getDeltaTime();
+					this.dashkey=-2;
+				} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+					hitBox.y += this.velocidad * Gdx.graphics.getDeltaTime();
+					this.dashkey=2;
+				}
+				Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
+				if (flip == 1) {
+					frameactual.setFlip(false, false);
+				} else if (flip == -1) {
+					frameactual.setFlip(true, false);
+				}
+				sprite.setRegion(frameactual);
+			}else{
+				Sprite frame = new Sprite(spriteAnimationStatic.getKeyFrame(stateTime, true));
+				if (flip == 1) {
+					frame.setFlip(false, false);
+				} else if (flip == -1) {
+					frame.setFlip(true, false);
+				}
+				sprite.setRegion(frame);
 			}
-			sprite.setRegion(frame);
 		}
-
 	}
 	public void dash(){
 		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !(System.currentTimeMillis() - tiempoUltimoDash < tiempoDash)) { //dash
-			//Sprite frameactual = new Sprite(spriteAnimation.getKeyFrame(stateTime, true));
+			Sprite frameactual = new Sprite(dashAnimation.getKeyFrame(stateTime, false));
+			Sprite frameactualup = new Sprite(dashupAnimation.getKeyFrame(stateTime, false));
+			Sprite frameactualdown = new Sprite(dashdownAnimation.getKeyFrame(stateTime, false));
 			if (dashkey == 1) {
 				hitBox.x += 400;
 				camaraJuego.translate(400,0);
-
-				//frameactual.setFlip(false, false);
+				frameactual.setFlip(false, false);
+				sprite.setRegion(frameactual);
 			} else if (dashkey == -1) {
 				hitBox.x -= 400;
 				camaraJuego.translate(-400,0);
-				//frameactual.setFlip(true, false);
+				frameactual.setFlip(true, false);
+				sprite.setRegion(frameactual);
 			} else if (dashkey== 2 ) {
 				hitBox.y += 400;
+				sprite.setRegion(frameactualup);
 			} else if (dashkey == -2) {
 				hitBox.y -= 400;
+				sprite.setRegion(frameactualdown);
 			}
 			dashsound.play();
 			tiempoUltimoDash=System.currentTimeMillis();

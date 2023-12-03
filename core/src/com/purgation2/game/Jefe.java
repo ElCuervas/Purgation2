@@ -13,14 +13,16 @@ public class Jefe extends Enemigo {
 	private long delayAtaque;
 	private long tiempoUltimoAtaque=0;
 
-	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation) {
-		super(x, y, width, height,player,animation);
+	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation, long vida) {
+		super(x, y, width, height,player,animation,vida);
+		this.hitBox.width=hitBox.width*5;
+		this.hitBox.height=hitBox.height*5;
 		delayAtaque = 500;
 	}
 	public void renderizar(SpriteBatch batch) {
 		stateTime+= Gdx.graphics.getDeltaTime();
 		Sprite frame = new Sprite(animation.getKeyFrame(stateTime, true));
-		batch.draw(frame, hitBox.x, hitBox.y,hitBox.width*10, hitBox.height*10);
+		batch.draw(frame, hitBox.x, hitBox.y,hitBox.width, hitBox.height);
 		moverse();
 		barravida.dibujarBarraVida(batch);
 
