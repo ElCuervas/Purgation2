@@ -31,6 +31,7 @@ public class Jugador extends Entidad {
 	private Animation<TextureRegion> dashdownAnimation;
 	private float tiempoParpadeo;
 	private Texture textureAnimation;
+	private Texture barratexture;
 	float stateTime;
 	private long tiempoUltimoAtaque;
 	private long cadenciaDisparo;
@@ -39,9 +40,10 @@ public class Jugador extends Entidad {
 	Sound dashsound;
 	private long flip=1;
 	private long dashkey=0;
-
 	public Jugador(float x, float y, float width, float height, Texture image,long vida) {
 		super(x, y, width, height,vida);
+		barratexture=new Texture(Gdx.files.internal("barraplayer.png"));
+		Barravida(barratexture);
 		this.probabilidadCritico=0.02;
 		this.dañoCritico=2;
 		this.daño=20;
@@ -52,7 +54,6 @@ public class Jugador extends Entidad {
 		setVelocidad(200);
 		setVelocidad(0);
 		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		dashsound=Gdx.audio.newSound(Gdx.files.internal("dash.ogg"));
 		dashsound.setVolume(1,4f);

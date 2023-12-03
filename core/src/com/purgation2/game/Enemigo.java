@@ -19,6 +19,7 @@ public class Enemigo extends Entidad {
 
     public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation,long vida) {
         super(x, y, width, height, vida);
+        Barravida(new Texture(Gdx.files.internal("barra vida.png")));
         this.animation=animation;
         this.target = player;
         probabilidadAtaque=0.0001;

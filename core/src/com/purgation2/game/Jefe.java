@@ -15,6 +15,7 @@ public class Jefe extends Enemigo {
 
 	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation, long vida) {
 		super(x, y, width, height,player,animation,vida);
+		Barravida(new Texture(Gdx.files.internal("barra vida.png")));
 		this.hitBox.width=hitBox.width*5;
 		this.hitBox.height=hitBox.height*5;
 		delayAtaque = 500;

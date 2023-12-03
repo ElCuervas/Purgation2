@@ -31,6 +31,7 @@ public class GameScreen implements Screen {
 	private long[] mejorasJefe={0,0,0,0,30};;
 	private long[] mejorasMinion;
 	private Mejoras mejoras;
+	private BarraDeVida barraDeVida;
 
 	public GameScreen(final Setup game){
 		this.game=game;
@@ -41,7 +42,6 @@ public class GameScreen implements Screen {
 		asset.load("enemigo.png", Texture.class);
 		asset.load("bala.png",Texture.class);
 		asset.finishLoading();
-
 		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),100);
 		enemigos=new ArrayList<>();
 		jefes= new ArrayList<>();
@@ -234,6 +234,11 @@ public class GameScreen implements Screen {
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			camera.translate(0, 11, 0);
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.P)){
+			pause();
+		} else if (Gdx.input.isKeyPressed(Input.Keys.I)) {
+			resume();
 		}
 		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 5000);
 		camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 5000);

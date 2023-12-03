@@ -13,10 +13,10 @@ public class BarraDeVida {
     private Texture textureAnimation;
     private Entidad entidad;
     private long maxVida;
-    public BarraDeVida(Entidad entidad) {
+    public BarraDeVida(Entidad entidad,Texture barravida) {
         this.entidad = entidad;
         this.maxVida = entidad.vida;
-        textureAnimation = new Texture(Gdx.files.internal("barra vida.png"));
+        textureAnimation = barravida;
         TextureRegion[][] tmp = TextureRegion.split(textureAnimation, textureAnimation.getWidth() / 6, textureAnimation.getHeight());
         vidaActual = new TextureRegion[6];
         System.arraycopy(tmp[0], 0, vidaActual, 0, 6);
