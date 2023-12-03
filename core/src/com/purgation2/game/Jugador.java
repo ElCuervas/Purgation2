@@ -10,13 +10,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 
 
 public class Jugador extends Entidad {
-
+	private long[] mejorasJugador;
 	private double probabilidadCritico;
 	private long dañoCritico;
 	private double regenacion;
@@ -32,22 +30,25 @@ public class Jugador extends Entidad {
 	private Texture textureAnimation;
 	float stateTime;
 	private long tiempoUltimoAtaque;
-	private long cadenciaDisparo = 200;
+	private long cadenciaDisparo;
 	private OrthographicCamera camaraJuego;
-	private ArrayList<Bala> balasJugador;
 	Sound soundbala;
 	Sound dashsound;
 	private long flip=1;
 	private long dashkey=0;
 
-	public Jugador(float x, float y, float width, float height, Texture image,long vida) {
-		super(x, y, width, height,vida);
-		this.probabilidadCritico=0.1;
+	public Jugador(float x, float y, float width, float height, Texture image) {
+		super(x, y, width, height);
+		this.probabilidadCritico=0.02;
 		this.dañoCritico=2;
 		this.daño=20;
 		this.regenacion=1;
-		this.tiempoInvencivilidad=2000;
+		this.tiempoInvencivilidad=1500;
+		this.cadenciaDisparo=500;
 		this.puntajeTotal=0;
+		setVelocidad(200);
+		setVelocidad(0);
+		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		dashsound=Gdx.audio.newSound(Gdx.files.internal("dash.ogg"));
@@ -73,6 +74,17 @@ public class Jugador extends Entidad {
 		stateTime=0f;
 
 		sprite.setSize(width, height);
+	}
+	public void mejorarEstadisticas( long[] estadisticasAdicionales) {
+		mejorasJugador=estadisticasAdicionales;
+		vida+=mejorasJugador[0];
+		regenacion+=mejorasJugador[1];
+		daño+=mejorasJugador[2];
+		probabilidadCritico+= (double) mejorasJugador[3] /100;
+		dañoCritico+=mejorasJugador[4];
+		tiempoInvencivilidad+=mejorasJugador[5];
+		velocidad+=mejorasJugador[6];
+		cadenciaDisparo-= mejorasJugador[8];
 	}
 	public void renderizar( SpriteBatch batch, OrthographicCamera camera,Texture texturaBala) {
 
@@ -113,7 +125,7 @@ public class Jugador extends Entidad {
 			camaraJuego.unproject(touchPos);
 			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture,getDaño());
 			balasEntidad.add(nuevaBala);
-			nuevaBala.setVelocidad(nuevaBala.getVelocidad()+1000);
+			nuevaBala.setVelocidad(nuevaBala.getVelocidad() + 750 + mejorasJugador[7]);
 		}
 	}
 	@Override
@@ -161,6 +173,14 @@ public class Jugador extends Entidad {
 		} else {
 			return super.getDaño();
 		}
+	}
+
+	public long getPuntajeTotal() {
+		return puntajeTotal;
+	}
+
+	public void setPuntaje(long puntajeExtra) {
+		this.puntajeTotal += puntajeExtra;
 	}
 
 	@Override

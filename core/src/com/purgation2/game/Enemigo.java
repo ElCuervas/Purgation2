@@ -17,11 +17,10 @@ public class Enemigo extends Entidad {
     Animation<TextureRegion> animation;
     protected float stateTime;
 
-    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation,long vida) {
-        super(x, y, width, height,vida);
+    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation) {
+        super(x, y, width, height);
         this.animation=animation;
         this.target = player;
-        this.velocidad = 300;
         probabilidadAtaque=0.0001;
         stateTime=0f;
     }
@@ -78,7 +77,6 @@ public class Enemigo extends Entidad {
     public void atacar( Texture bala) {
         if (chanceAtacar()) {
             Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDaño());
-            nuevaBala.setVelocidad(nuevaBala.getVelocidad() + 500);
             balasEntidad.add(nuevaBala);
         }
         target.recibirDaño(this);

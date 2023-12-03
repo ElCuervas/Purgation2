@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Bala extends Rectangle {
 	private long dañoBala;
 	private Sprite sprite;
-	private float velocidad;
+	private long velocidad;
 	private float angulo;
 	private boolean perforante;
 
@@ -15,7 +15,7 @@ public class Bala extends Rectangle {
 		super(x, y, 64, 64);
 		sprite = new Sprite(bala);
 		this.dañoBala=daño;
-		this.velocidad = 500;
+		this.velocidad = 1000;
 		angulo = MathUtils.atan2(targetY - y, targetX - x);
 		perforante=false;
 	}
@@ -35,12 +35,12 @@ public class Bala extends Rectangle {
 		x += xSpeed * delta;
 		y += ySpeed * delta;
 	}
-	public float getVelocidad() {
+	public long getVelocidad() {
 		return velocidad;
 	}
 
-	public void setVelocidad(float velocidad) {
-		this.velocidad = velocidad;
+	public void setVelocidad(long velocidadExtra) {
+		this.velocidad +=velocidadExtra;
 	}
 
 	public Sprite getSprite() {

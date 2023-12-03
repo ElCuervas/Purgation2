@@ -11,11 +11,11 @@ public abstract class Entidad implements movimientos {
 	protected long velocidad;
 	protected ArrayList<Bala> balasEntidad;
 
-	public Entidad(float x, float y, float width, float height,long vida) {
+	public Entidad(float x, float y, float width, float height) {
 		hitBox=new Rectangle(x,y,width,height);
-		this.vida = vida;
+		this.vida = 100;
 		this.daño = 10;
-		this.velocidad = 100;
+		this.velocidad = 300;
 		barravida = new BarraDeVida(this);
 		balasEntidad = new ArrayList<>();
 	}
@@ -39,7 +39,7 @@ public abstract class Entidad implements movimientos {
 		return velocidad;
 	}
 
-	public void setVelocidad(long velocidad) {
-		this.velocidad = velocidad;
+	public void setVelocidad(long velocidadExtra) {
+		this.velocidad+= velocidadExtra;
 	}
 }
