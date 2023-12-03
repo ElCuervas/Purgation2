@@ -13,16 +13,16 @@ import java.util.Iterator;
 
 public class Enemigo extends Entidad {
     private double probabilidadAtaque;
-    private Jugador target;
+    protected Jugador target;
     Animation<TextureRegion> animation;
-    float stateTime;
+    protected float stateTime;
 
     public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation) {
         super(x, y, width, height);
         this.animation=animation;
         this.target = player;
         this.velocidad = 300;
-        probabilidadAtaque=0.001;
+        probabilidadAtaque=0.0001;
         stateTime=0f;
     }
     public void renderizar(SpriteBatch batch) {

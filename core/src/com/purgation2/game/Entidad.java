@@ -1,8 +1,6 @@
 package com.purgation2.game;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-
 import java.util.ArrayList;
 
 public abstract class Entidad implements movimientos {
@@ -21,7 +19,6 @@ public abstract class Entidad implements movimientos {
 		barravida = new BarraDeVida(this);
 		balasEntidad = new ArrayList<>();
 	}
-
 	public long getVida() {
 		return vida;
 	}

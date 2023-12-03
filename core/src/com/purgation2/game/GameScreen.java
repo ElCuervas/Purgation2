@@ -25,11 +25,10 @@ public class GameScreen implements Screen {
 	Music SongMusic;
 	Jugador player1;
 	ArrayList<Enemigo> enemigos;
+	ArrayList<Jefe> jefes;
+	ArrayList<minion> minions;
 	Animation<TextureRegion> animationEnemigo;
 	float stateTime;
-	ArrayList<Bala> balasJugador;
-	ArrayList<Bala> balasJefe;
-	ArrayList<minion> minions;
 	private double[] mejorasMinion;
 	private double[] mejorasJugador;
 	private double[] mejorasEnemigo;
@@ -54,14 +53,19 @@ public class GameScreen implements Screen {
 			public void run() {
 				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0),10);
 			}
-		},0,5);
+		},2,10);
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+				generarJefe(animador((Texture) asset.get("enemigo.png"),3,0.2f,0));
+			}
+		},0,30);
 
 		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("Player.png")));
-
-		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,(Texture) asset.get("Player.png"));
 		player1.setVelocidad(900);
 
 		enemigos=new ArrayList<>();
+		jefes= new ArrayList<>();
 		stateTime=0f;
 
 		mapa = new Sprite((Texture) asset.get("mapa.png"));
@@ -96,15 +100,26 @@ public class GameScreen implements Screen {
 
 		borde.draw(game.batch);
 		mapa.draw(game.batch);
+
 		player1.renderizar(game.batch,camera,(Texture) asset.get("bala.png"));//renderizado individual jugador
 
 		for (Enemigo enemigo:enemigos) {//renderizado colectivo enemigos
 			enemigo.renderizar(game.batch);
 			enemigo.atacar((Texture) asset.get("bala.png"));
 		}
+
+		for (Jefe jefe : jefes){//renderizado de jefes
+			jefe.renderizar(game.batch);
+			jefe.atacar((Texture) asset.get("bala.png"));
+		}
+
 		game.batch.end();
 		limiteMapa();
+		removerEnemigos();
 
+	}
+
+	private void removerEnemigos() {
 		Iterator<Enemigo> iterEnemigos = enemigos.iterator();
 		while (iterEnemigos.hasNext()) {
 			Enemigo enemigoActivo = iterEnemigos.next();
@@ -116,7 +131,18 @@ public class GameScreen implements Screen {
 				iterEnemigos.remove();
 			}
 		}
+
+		Iterator<Jefe> iterJefes = jefes.iterator();
+		while (iterJefes.hasNext()) {
+			Jefe jefeVivo = iterJefes.next();
+			jefeVivo.recibirDaño(player1);
+			if (jefeVivo.getVida() <= 0) {
+				DeadSound.play();
+				iterJefes.remove();
+			}
+		}
 	}
+
 	public void limiteMapa() {
 		if (player1.hitBox.x < 0)
 			player1.hitBox.x = 0;
@@ -165,19 +191,15 @@ public class GameScreen implements Screen {
 	}
 	public void generarEnemigo(Animation<TextureRegion> animation, int cantidadEnemigos) {
 		for (int i = 0; i < cantidadEnemigos; i++) {
-			int spawn = MathUtils.random(-1600, 800);
-			float spawnX;
-			float spawnY;
-			if(spawn<0){
-				spawnX = player1.hitBox.x + spawn-800;
-				spawnY = player1.hitBox.y + spawn-800;
-			}else{
-				spawnX = player1.hitBox.x + spawn+800;
-				spawnY = player1.hitBox.y + spawn+800;
-			}
-			Enemigo nuevoEnemigo = new Enemigo(spawnX, spawnY, 64 * 3, 64 * 3, player1,animation);
+			long margen = 1000;
+			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
 			enemigos.add(nuevoEnemigo);
 		}
+	}
+	public void generarJefe(Animation<TextureRegion> animation) {
+		long margen = 1000;
+		Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+		jefes.add(jefe);
 	}
 	private float crearCordenadaX(long margen) {
 		float spawnX;
@@ -193,9 +215,6 @@ public class GameScreen implements Screen {
 			spawnY = MathUtils.random(0, 5000);
 		} while (spawnY > camera.position.y - margen - camera.viewportHeight / 2 && spawnY < margen +camera.position.y + camera.viewportHeight / 2);
 		return spawnY;
-	}
-
-	public void generarJefe() {
 	}
 
 	public void generarMinion() {
