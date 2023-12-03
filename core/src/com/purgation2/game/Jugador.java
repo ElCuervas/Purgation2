@@ -43,8 +43,8 @@ public class Jugador extends Entidad {
 	private long flip=1;
 	private long dashkey=0;
 
-	public Jugador(float x, float y, float width, float height, Texture image) {
-		super(x, y, width, height);
+	public Jugador(float x, float y, float width, float height, Texture image,long vida) {
+		super(x, y, width, height,vida);
 		this.probabilidadCritico=0.1;
 		this.dañoCritico=2;
 		this.daño=20;

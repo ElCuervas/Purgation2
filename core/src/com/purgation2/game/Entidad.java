@@ -11,9 +11,9 @@ public abstract class Entidad implements movimientos {
 	protected long velocidad;
 	protected ArrayList<Bala> balasEntidad;
 
-	public Entidad(float x, float y, float width, float height) {
+	public Entidad(float x, float y, float width, float height,long vida) {
 		hitBox=new Rectangle(x,y,width,height);
-		this.vida = 100;
+		this.vida = vida;
 		this.daño = 10;
 		this.velocidad = 100;
 		barravida = new BarraDeVida(this);

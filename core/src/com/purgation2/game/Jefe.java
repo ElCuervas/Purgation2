@@ -11,23 +11,24 @@ import java.util.Iterator;
 
 public class Jefe extends Enemigo {
 	private long delayAtaque;
+	Texture cubo;
 	private long tiempoUltimoAtaque=0;
 
-	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation) {
-		super(x, y, width, height,player,animation);
+	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation, long vida) {
+		super(x, y, width, height,player,animation,vida);
 		delayAtaque = 500;
+		this.hitBox.width=hitBox.width*5;
+		this.hitBox.height=hitBox.height*5;
 	}
 	public void renderizar(SpriteBatch batch) {
 		stateTime+= Gdx.graphics.getDeltaTime();
 		Sprite frame = new Sprite(animation.getKeyFrame(stateTime, true));
-		batch.draw(frame, hitBox.x, hitBox.y,hitBox.width*10, hitBox.height*10);
+		batch.draw(frame, hitBox.x, hitBox.y,hitBox.width, hitBox.height);
 		moverse();
 		barravida.dibujarBarraVida(batch);
-
 		for (Bala bala : balasEntidad) {
 			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
 		}
-
 		Iterator<Bala> iter = balasEntidad.iterator();
 		while (iter.hasNext()) {
 			Bala bala = iter.next();

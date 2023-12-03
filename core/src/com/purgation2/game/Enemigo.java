@@ -17,8 +17,8 @@ public class Enemigo extends Entidad {
     Animation<TextureRegion> animation;
     protected float stateTime;
 
-    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation) {
-        super(x, y, width, height);
+    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation,long vida) {
+        super(x, y, width, height,vida);
         this.animation=animation;
         this.target = player;
         this.velocidad = 300;

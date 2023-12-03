@@ -51,9 +51,9 @@ public class GameScreen implements Screen {
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
-				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0),10);
+				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0),1);
 			}
-		},2,10);
+		},2,100);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
@@ -61,7 +61,7 @@ public class GameScreen implements Screen {
 			}
 		},0,30);
 
-		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("Player.png")));
+		player1 = new Jugador(2500+ 64*3/2,2500+ 64*3/2,64*3,64*3,((Texture) asset.get("Player.png")),100);
 		player1.setVelocidad(900);
 
 		enemigos=new ArrayList<>();
@@ -192,13 +192,13 @@ public class GameScreen implements Screen {
 	public void generarEnemigo(Animation<TextureRegion> animation, int cantidadEnemigos) {
 		for (int i = 0; i < cantidadEnemigos; i++) {
 			long margen = 1000;
-			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,100);
 			enemigos.add(nuevoEnemigo);
 		}
 	}
 	public void generarJefe(Animation<TextureRegion> animation) {
 		long margen = 1000;
-		Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+		Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,500);
 		jefes.add(jefe);
 	}
 	private float crearCordenadaX(long margen) {
