@@ -43,7 +43,7 @@ public class Jugador extends Entidad {
 	public Jugador(float x, float y, float width, float height, Texture image,long vida) {
 		super(x, y, width, height,vida);
 		barratexture=new Texture(Gdx.files.internal("barraplayer.png"));
-		Barravida(barratexture);
+		Barravida(barratexture,-1200,600,3);
 		this.probabilidadCritico=0.02;
 		this.dañoCritico=2;
 		this.daño=20;

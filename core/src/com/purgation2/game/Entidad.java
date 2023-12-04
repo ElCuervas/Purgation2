@@ -43,7 +43,7 @@ public abstract class Entidad implements movimientos {
 		this.velocidad+= velocidadExtra;
 	}
 
-	public void Barravida(Texture barravida) {
-		this.barravida = new BarraDeVida(this,barravida);
+	public void Barravida(Texture barravida,float modificacionX,float modificacionY,float multiplicador) {
+		this.barravida = new BarraDeVida(this,barravida,modificacionX,modificacionY,multiplicador);
 	}
 }

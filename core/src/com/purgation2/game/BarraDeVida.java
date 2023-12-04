@@ -13,9 +13,15 @@ public class BarraDeVida {
     private Texture textureAnimation;
     private Entidad entidad;
     private long maxVida;
-    public BarraDeVida(Entidad entidad,Texture barravida) {
+    private float modificacionX;
+    private float modificacionY;
+    private float multiplicador;
+    public BarraDeVida(Entidad entidad,Texture barravida,float modificacionX,float modificacionY,float multiplicador) {
         this.entidad = entidad;
         this.maxVida = entidad.vida;
+        this.modificacionX=modificacionX;
+        this.modificacionY= modificacionY;
+        this.multiplicador=multiplicador;
         textureAnimation = barravida;
         TextureRegion[][] tmp = TextureRegion.split(textureAnimation, textureAnimation.getWidth() / 6, textureAnimation.getHeight());
         vidaActual = new TextureRegion[6];
@@ -29,17 +35,19 @@ public class BarraDeVida {
         float y =entidad.hitBox.y + entidad.hitBox.height;
         if (entidad.vida < maxVida) {
             if (vidaPorcentaje>=83.2){
-                corazon=0;
-            } else if (vidaPorcentaje<83.2 && vidaPorcentaje>=66.6) {
                 corazon=1;
-            } else if (vidaPorcentaje<66.6 && vidaPorcentaje>=50) {
+            } else if (vidaPorcentaje<83.2 && vidaPorcentaje>=66.6) {
                 corazon=2;
-            } else if (vidaPorcentaje<50 && vidaPorcentaje>=33.3) {
+            } else if (vidaPorcentaje<66.6 && vidaPorcentaje>=50) {
                 corazon=3;
-            } else if (vidaPorcentaje<33.3 && vidaPorcentaje>=16.6) {
+            } else if (vidaPorcentaje<50 && vidaPorcentaje>=33.3) {
                 corazon=4;
+            } else if (vidaPorcentaje<33.3 && vidaPorcentaje>=16.6) {
+                corazon=5;
             }
-            batch.draw(vidaActual[corazon], x, y, entidad.hitBox.width/2, entidad.hitBox.height/2);
+            batch.draw(vidaActual[corazon], x+modificacionX, y+modificacionY, (entidad.hitBox.width/2)*multiplicador, (entidad.hitBox.height/2)*multiplicador);
+        }else{
+            batch.draw(vidaActual[0], x+modificacionX, y+modificacionY, (entidad.hitBox.width/2)*multiplicador, (entidad.hitBox.height/2)*multiplicador);
         }
     }
 }

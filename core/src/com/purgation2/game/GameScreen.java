@@ -102,22 +102,50 @@ public class GameScreen implements Screen {
 		borde.draw(game.batch);
 		mapa.draw(game.batch);
 
-		player1.renderizar(game.batch,camera,(Texture) asset.get("bala.png"));//renderizado individual jugador
-
-		for (Enemigo enemigo:enemigos) {//renderizado colectivo enemigos
+		for (Enemigo enemigo:enemigos) {
 			enemigo.renderizar(game.batch);
 			enemigo.atacar((Texture) asset.get("bala.png"));
 		}
-
-		for (Jefe jefe : jefes){//renderizado de jefes
+		separacion();
+		for (Jefe jefe : jefes){
 			jefe.renderizar(game.batch);
 			jefe.atacar((Texture) asset.get("bala.png"));
 		}
-
+		player1.renderizar(game.batch,camera,(Texture) asset.get("bala.png"));//renderizado individual jugador
 		game.batch.end();
 		limiteMapa();
 		removerEnemigos();
+	}
+	private void separacion(){
+		for (int i = 0; i < enemigos.size(); i++) {
+			Enemigo enemigoA = enemigos.get(i);
+			for (int j = i + 1; j < enemigos.size(); j++) {
+				Enemigo enemigoB = enemigos.get(j);
+				float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, enemigoB.hitBox.x, enemigoB.hitBox.y);
+				float distanciaMinima = 200;
+				if (distancia < distanciaMinima) {
+					separarEnemigos(enemigoA, enemigoB);
+				}
+			}
+		}
+	}
+	private float calcularDistancia(float x1, float y1, float x2, float y2) {
+		return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+	}
+	private void separarEnemigos(Enemigo enemigoA, Enemigo enemigoB) {
+		float deltaX = enemigoB.hitBox.x - enemigoA.hitBox.x;
+		float deltaY = enemigoB.hitBox.y - enemigoA.hitBox.y;
+		float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, enemigoB.hitBox.x, enemigoB.hitBox.y);
+		float distanciaSegura = 200;
 
+		float traslacionX = (distanciaSegura - distancia) * (deltaX / distancia);
+		float traslacionY = (distanciaSegura - distancia) * (deltaY / distancia);
+
+		enemigoA.hitBox.x -= traslacionX / 2;
+		enemigoA.hitBox.y -= traslacionY / 2;
+
+		enemigoB.hitBox.x += traslacionX / 2;
+		enemigoB.hitBox.y += traslacionY / 2;
 	}
 
 	private void removerEnemigos() {
@@ -129,7 +157,6 @@ public class GameScreen implements Screen {
 				player1.setPuntaje(10);
 				DeadSound.play();
 				iterEnemigos.remove();
-
 			} else if (enemigoActivo.hitBox.x<0||enemigoActivo.hitBox.x>5000||enemigoActivo.hitBox.y<0||enemigoActivo.hitBox.y>5000) {
 				iterEnemigos.remove();
 			}

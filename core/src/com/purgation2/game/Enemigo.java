@@ -19,7 +19,7 @@ public class Enemigo extends Entidad {
 
     public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation,long vida) {
         super(x, y, width, height, vida);
-        Barravida(new Texture(Gdx.files.internal("barra vida.png")));
+        Barravida(new Texture(Gdx.files.internal("barra vida.png")),0,0,1);
         this.animation=animation;
         this.target = player;
         probabilidadAtaque=0.0001;
@@ -35,7 +35,6 @@ public class Enemigo extends Entidad {
         for (Bala bala : balasEntidad) {
             batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
         }
-
         Iterator<Bala> iter = balasEntidad.iterator();
         while (iter.hasNext()) {
             Bala bala = iter.next();
