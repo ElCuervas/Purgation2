@@ -16,10 +16,10 @@ import java.util.Iterator;
 public class Jugador extends Entidad {
 	private long[] mejorasJugador;
 	private double probabilidadCritico;
-	private long dañoCritico;
+	private long criticalDamage;
 	private double regenacion;
 	private long tiempoInvencivilidad;
-	private long tiempoUltimoDaño=1000;
+	private long timeLastDamage =1000;
 	private long tiempoUltimoDash;
 	private long tiempoDash=400;
 	private long puntajeTotal;
@@ -29,9 +29,8 @@ public class Jugador extends Entidad {
 	private Animation<TextureRegion> dashAnimation;
 	private Animation<TextureRegion> dashupAnimation;
 	private Animation<TextureRegion> dashdownAnimation;
-	private Animation<TextureRegion> balaespecial;
+	private Animation<TextureRegion> balaEspecial;
 	private float tiempoParpadeo;
-	private Texture textureAnimation;
 	private Texture barratexture;
 	float stateTime;
 	private long tiempoUltimoAtaque;
@@ -41,18 +40,22 @@ public class Jugador extends Entidad {
 	Sound dashsound;
 	private long flip=1;
 	private long dashkey=0;
-	public Jugador(float x, float y, float width, float height, Texture image,long vida,Animation<TextureRegion> balaespecial) {
-		super(x, y, width, height,vida);
+	private long contadorKillsEnemigos;
+	private long contadorKillsJefes;
+	public Jugador(float x, float y, float width, float height, Texture image,Animation<TextureRegion> balaespecial) {
+		super(x, y, width, height);
 		barratexture=new Texture(Gdx.files.internal("barraplayer.png"));
 		Barravida(barratexture,-1200,600,3);
 		this.probabilidadCritico=0.02;
-		this.dañoCritico=2;
-		this.daño=20;
+		this.criticalDamage =2;
+		this.damage =20;
 		this.regenacion=1;
 		this.tiempoInvencivilidad=1500;
 		this.cadenciaDisparo=500;
 		this.puntajeTotal=0;
-		this.balaespecial=balaespecial;
+		this.contadorKillsEnemigos=0;
+		this.contadorKillsJefes=0;
+		this.balaEspecial=balaespecial;
 		setVelocidad(200);
 		setVelocidad(0);
 		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -63,8 +66,7 @@ public class Jugador extends Entidad {
 		tiempoUltimoAtaque = 0;
 		tiempoUltimoDash = 0;
 		sprite=new Sprite(image);
-		textureAnimation=image;
-		TextureRegion[][] tmp = TextureRegion.split(textureAnimation,textureAnimation.getWidth()/14, textureAnimation.getHeight());
+		TextureRegion[][] tmp = TextureRegion.split(image,image.getWidth()/14, image.getHeight());
 		TextureRegion[] animation = new TextureRegion[4];
 		TextureRegion[] animationStatic = new TextureRegion[2];
 		TextureRegion[] dash = new TextureRegion[3];
@@ -101,11 +103,12 @@ public class Jugador extends Entidad {
 	}
 	public void mejorarEstadisticas( long[] estadisticasAdicionales) {
 		mejorasJugador=estadisticasAdicionales;
-		this.vida+=mejorasJugador[0];
+		setVidaMaxima(mejorasJugador[0]);
+		this.vida +=mejorasJugador[0];
 		this.regenacion+=mejorasJugador[1];
-		this.daño+=mejorasJugador[2];
+		this.damage +=mejorasJugador[2];
 		this.probabilidadCritico+= (double) mejorasJugador[3] /100;
-		this.dañoCritico+=mejorasJugador[4];
+		this.criticalDamage +=mejorasJugador[4];
 		this.tiempoInvencivilidad+=mejorasJugador[5];
 		this.velocidad+=mejorasJugador[6];
 		this.cadenciaDisparo-= mejorasJugador[8];
@@ -115,7 +118,7 @@ public class Jugador extends Entidad {
 		sprite.setPosition(hitBox.x, hitBox.y);
 		sprite.setSize(hitBox.width, hitBox.height);
 		stateTime+=Gdx.graphics.getDeltaTime();
-		Sprite balaactual = new Sprite(balaespecial.getKeyFrame(stateTime, true));
+		Sprite balaactual = new Sprite(balaEspecial.getKeyFrame(stateTime, true));
 		for (Bala bala : balasEntidad) {
 			if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
 				bala.setPerforante(true);
@@ -134,7 +137,7 @@ public class Jugador extends Entidad {
 		barravida.dibujarBarraVida(batch);
 
 		if(esInvecible()){
-			pestañeo();
+			titilar();
 		}else{
 			sprite.setColor(1,1,1,1);
 		}
@@ -160,32 +163,37 @@ public class Jugador extends Entidad {
 			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camaraJuego.unproject(touchPos);
-			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture,getDaño());
+			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture, getDamage());
 			balasEntidad.add(nuevaBala);
 			nuevaBala.setVelocidad(nuevaBala.getVelocidad() + 750 + mejorasJugador[7]);
 		}
 	}
 	@Override
-	public void recibirDaño(Entidad enemigo) {
+	public void takeDamage(Entidad enemigo) {
 		if(enemigo.hitBox.overlaps(hitBox) && !esInvecible()){
-			vida-=enemigo.getDaño();
-			tiempoUltimoDaño=System.currentTimeMillis();
+			vida-=enemigo.getDamage();
+			timeLastDamage =System.currentTimeMillis();
 		}
 		Iterator<Bala> iterBalas = enemigo.balasEntidad.iterator();
 		while (iterBalas.hasNext()) {
 			Bala proyectil = iterBalas.next();
 			if (proyectil.overlaps(hitBox)&& !esInvecible()) {
-				vida -= proyectil.getDañoBala();
-				tiempoUltimoDaño=System.currentTimeMillis();
+				vida -= proyectil.getBulletDamage();
+				timeLastDamage =System.currentTimeMillis();
 				iterBalas.remove();
 			}
 		}
 	}
+	public void regenerarVida() {
+		if (vida<vidaMaxima){
+			vida+=regenacion;
+		}
+	}
 
 	public boolean esInvecible(){
-		return System.currentTimeMillis()-tiempoUltimoDaño<tiempoInvencivilidad;
+		return System.currentTimeMillis()- timeLastDamage <tiempoInvencivilidad;
 	}
-	private void pestañeo() {
+	private void titilar() {
 		if (tiempoParpadeo <= 5.0f) {
 			if (tiempoParpadeo % 0.5f < 0.25f) {
 				sprite.setColor(1, 1, 1, 0.5f);
@@ -199,16 +207,17 @@ public class Jugador extends Entidad {
 		}
 	}
 	@Override
-	public long getDaño() {
-		return dañoJugador();
+	public long getDamage() {
+		return playerDamage();
 	}
 
-	private long dañoJugador() {
+
+	private long playerDamage() {
 		double probabilidad = Math.random();
 		if (probabilidad < probabilidadCritico) {
-			return (super.getDaño() * dañoCritico);
+			return (super.getDamage() * criticalDamage);
 		} else {
-			return super.getDaño();
+			return super.getDamage();
 		}
 	}
 
@@ -216,8 +225,15 @@ public class Jugador extends Entidad {
 		return puntajeTotal;
 	}
 
-	public void setPuntaje(long puntajeExtra) {
-		this.puntajeTotal += puntajeExtra;
+	public void setPuntaje(boolean jefe) {
+		if (jefe){
+			puntajeTotal += 500;
+			contadorKillsJefes++;
+		}else {
+			puntajeTotal += 10;
+			contadorKillsEnemigos++;
+		}
+
 	}
 
 	@Override
@@ -286,4 +302,9 @@ public class Jugador extends Entidad {
 			tiempoUltimoDash=System.currentTimeMillis();
 		}
 	}
+	public String contadorKills(){
+		return "{Enemigos: "+contadorKillsEnemigos+", Jefes: "+contadorKillsJefes+"}";
+	}
+
+
 }

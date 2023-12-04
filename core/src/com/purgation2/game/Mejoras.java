@@ -7,7 +7,7 @@ public class Mejoras {
 	private long[] mejorasEnemigo;
 	private long[] mejorasJefe;
 	private ArrayList<Long> ptosProximaMejoraJugador;
-	private Jugador player;
+	private final Jugador player;
 	private int mejorasTotales;
 
 	public Mejoras(Jugador jugador) {
@@ -15,20 +15,22 @@ public class Mejoras {
 		ptosProximaMejoraJugador.add(50L);
 		player = jugador;
 		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		mejorasEnemigo = new long[]{0,0,0,0,0};
-		mejorasJefe = new long[]{0,0,0,0,0};
+		mejorasEnemigo = new long[]{0,0,0,0,10};
+		mejorasJefe = new long[]{0,0,0,0,1};
 		mejorasTotales=0;
 	}
 
 	public long[] mejorarEstadisticasJugador() {
 		if (player.getPuntajeTotal() >= ptosProximaMejoraJugador.get(mejorasTotales)) {
 			int mejorasConcedidas = (int) (player.getPuntajeTotal() / ptosProximaMejoraJugador.get(mejorasTotales));
-
 			for (int i = 0 ; i < mejorasConcedidas ; i++){// por cada mejora el limite se multiplica x 3
 				ptosProximaMejoraJugador.add(ptosProximaMejoraJugador.get(mejorasTotales)*3);
 			}
-
 			mejorasTotales+=mejorasConcedidas;
+
+			System.out.println("Mejora "+mejorasTotales);
+			System.out.println(player.getPuntajeTotal()+"/"+ ptosProximaMejoraJugador.get(mejorasTotales));
+			System.out.println(player.contadorKills());
 
 			if (mejorasTotales%3==0){//cada 3 mejoras
 
@@ -39,9 +41,8 @@ public class Mejoras {
 			}
 
 			while (mejorasConcedidas!=0){
-				System.out.println("Mejora N°"+mejorasTotales);
 
-				mejorasJugador[0] = 10L * mejorasTotales; //* vida extra
+				mejorasJugador[0] = 10L * mejorasTotales; //* vida maxima extra
 				mejorasJugador[1] = 1; //+regeneracion x segundo
 				mejorasJugador[2] = 10L * mejorasTotales; //daño extra
 				mejorasJugador[3] = 1; //probabilidad de critico (x 100)
@@ -60,7 +61,7 @@ public class Mejoras {
 	}
 
 	public long[] mejorarEstadisiticasEnemigo() {
-		mejorasEnemigo[0]+=10; // vida adicional
+		mejorasEnemigo[0]+=10; // vida maxima adicional
 		mejorasEnemigo[1]+=5; // daño adicional
 
 		if (player.getPuntajeTotal() >= ptosProximaMejoraJugador.get(mejorasTotales)) {
@@ -73,10 +74,10 @@ public class Mejoras {
 		return mejorasEnemigo;
 	}
 	public long[] mejorarEstadisticasJefe() {
-		mejorasJefe[0]+=10; // vida adicional
+		mejorasJefe[0]+=100; // vida maxima adicional
 		mejorasJefe[1]+=5; // daño adicional
 		if (player.getPuntajeTotal() >= ptosProximaMejoraJugador.get(mejorasTotales)) {
-			if (mejorasTotales % 4 == 0) {
+			if (mejorasTotales % 2 == 0) {
 				mejorasJefe[2] += 5; // velocidad adicional
 				mejorasJefe[3] += 5; // cadencia de ataque adicional
 				mejorasJefe[4] += 1; // spawn adicional

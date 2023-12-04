@@ -7,6 +7,6 @@ public interface movimientos {
 	void moverse();
 
 	void atacar( Texture bala);
-	void recibirDaño(Entidad entidad);
+	void takeDamage(Entidad entidad);
 
 }

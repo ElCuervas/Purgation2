@@ -13,8 +13,8 @@ public class Jefe extends Enemigo {
 	private long delayAtaque;
 	private long tiempoUltimoAtaque=0;
 
-	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation, long vida) {
-		super(x, y, width, height,player,animation,vida);
+	public Jefe(float x, float y, float width, float height, Jugador player,Animation<TextureRegion> animation) {
+		super(x, y, width, height,player,animation);
 		Barravida(new Texture(Gdx.files.internal("barra vida.png")),0,0,1);
 		this.hitBox.width=hitBox.width*5;
 		this.hitBox.height=hitBox.height*5;
@@ -45,9 +45,9 @@ public class Jefe extends Enemigo {
 		long tiempoActual = System.currentTimeMillis();
 		if (tiempoActual - tiempoUltimoAtaque > delayAtaque) {
 				tiempoUltimoAtaque = tiempoActual;
-			    Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDaño());
+			    Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDamage());
 			    balasEntidad.add(nuevaBala);
-			    target.recibirDaño(this);
+			    target.takeDamage(this);
 		}
 	}
 

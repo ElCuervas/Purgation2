@@ -30,8 +30,7 @@ public class GameScreen implements Screen,Runnable{
 	private long[] mejorasEnemigo={0,0,0,0,10};;
 	private long[] mejorasJefe={0,0,0,0,1};;
 	private long[] mejorasMinion;
-	private Mejoras mejoras;
-	private BarraDeVida barraDeVida;
+	private final Mejoras mejoras;
 
 	public GameScreen(final Setup game){
 		this.game=game;
@@ -44,7 +43,7 @@ public class GameScreen implements Screen,Runnable{
 		asset.load("jefe.png",Texture.class);
 		asset.load("charged.png",Texture.class);
 		asset.finishLoading();
-		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),100,animador((Texture) asset.get("charged.png"),7,0.1f,0));
+		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),animador((Texture) asset.get("charged.png"),7,0.1f,0));
 		enemigos=new ArrayList<>();
 		jefes= new ArrayList<>();
 		mejoras = new Mejoras(player1);
@@ -54,25 +53,25 @@ public class GameScreen implements Screen,Runnable{
 			public void run() {
 				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0));
 			}
-		},2,10);
+		},0,5);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
 				generarJefe(animador((Texture) asset.get("jefe.png"),4,0.1f,0));
 			}
-		},10,30);
+		},10,10);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
 				mejorasEnemigo=mejoras.mejorarEstadisiticasEnemigo();
 				mejorasJefe=mejoras.mejorarEstadisticasJefe();
 			}
-		},15,30);
+		},5,5);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
 				player1.mejorarEstadisticas(mejoras.mejorarEstadisticasJugador());
-				System.out.println(player1.getVida());
+				player1.regenerarVida();
 			}
 		},0,1);
 
@@ -130,9 +129,9 @@ public class GameScreen implements Screen,Runnable{
 		Iterator<Enemigo> iterEnemigos = enemigos.iterator();
 		while (iterEnemigos.hasNext()) {
 			Enemigo enemigoActivo = iterEnemigos.next();
-			enemigoActivo.recibirDaño(player1);
+			enemigoActivo.takeDamage(player1);
 			if (enemigoActivo.getVida() <= 0) {
-				player1.setPuntaje(10);
+				player1.setPuntaje(false);
 				DeadSound.play();
 				iterEnemigos.remove();
 			} else if (enemigoActivo.hitBox.x<0||enemigoActivo.hitBox.x>5000||enemigoActivo.hitBox.y<0||enemigoActivo.hitBox.y>5000) {
@@ -143,9 +142,9 @@ public class GameScreen implements Screen,Runnable{
 		Iterator<Jefe> iterJefes = jefes.iterator();
 		while (iterJefes.hasNext()) {
 			Jefe jefeVivo = iterJefes.next();
-			jefeVivo.recibirDaño(player1);
+			jefeVivo.takeDamage(player1);
 			if (jefeVivo.getVida() <= 0) {
-				player1.setPuntaje(1000);
+				player1.setPuntaje(true);
 				DeadSound.play();
 				iterJefes.remove();
 			}
@@ -201,9 +200,9 @@ public class GameScreen implements Screen,Runnable{
 	public void generarEnemigo(Animation<TextureRegion> animation) {
 		int margen = 1000;
 		for (long i = 0; i < mejorasEnemigo[4]; i++) {
-			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,100);
-			nuevoEnemigo.setVida(mejorasEnemigo[0]);
-			nuevoEnemigo.setDaño(mejorasEnemigo[1]);
+			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+			nuevoEnemigo.setVidaMaxima(mejorasEnemigo[0]);
+			nuevoEnemigo.setDamage(mejorasEnemigo[1]);
 			nuevoEnemigo.setVelocidad(mejorasEnemigo[2]);
 			nuevoEnemigo.setProbabilidadAtaque(mejorasEnemigo[3]);
 			enemigos.add(nuevoEnemigo);
@@ -212,9 +211,9 @@ public class GameScreen implements Screen,Runnable{
 	public void generarJefe(Animation<TextureRegion> animation) {
 		int margen = 1000;
 		for (int i = 0; i < mejorasJefe[4]; i++) {
-			Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,400);
-			jefe.setVida(mejorasJefe[0]);
-			jefe.setDaño(mejorasJefe[1]);
+			Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation);
+			jefe.setVidaMaxima(400+mejorasJefe[0]);
+			jefe.setDamage(mejorasJefe[1]);
 			jefe.setVelocidad(mejorasJefe[2]);
 			jefe.setDelayAtaque(mejorasJefe[3]);
 			jefes.add(jefe);
@@ -281,8 +280,7 @@ public class GameScreen implements Screen,Runnable{
 		for (int i = comienzoframe; i < cantframe; i++) {
 			animation[index++]=tmp[0][i];
 		}
-		Animation<TextureRegion> animationfinal = new Animation<>(fotogramas,animation);
-		return animationfinal;
+		return new Animation<>(fotogramas,animation);
 	}
 
 	@Override
@@ -302,7 +300,7 @@ public class GameScreen implements Screen,Runnable{
 			}
 		}
 	}
-	private float calcularDistancia(float x1, float y1, float x2, float y2) {
+	public float calcularDistancia(float x1, float y1, float x2, float y2) {
 		return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 	}
 	private void separarEnemigos(Enemigo enemigoA, Enemigo enemigoB) {
@@ -321,8 +319,7 @@ public class GameScreen implements Screen,Runnable{
 		enemigoB.hitBox.y += traslacionY / 2;
 	}
 	private void separacionjugador(){
-		for (int i = 0; i < enemigos.size(); i++) {
-			Enemigo enemigoA = enemigos.get(i);
+		for (Enemigo enemigoA : enemigos) {
 			float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, player1.hitBox.x, player1.hitBox.y);
 			float distanciaMinima = 250;
 			if (distancia < distanciaMinima) {

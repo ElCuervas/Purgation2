@@ -6,16 +6,18 @@ import java.util.ArrayList;
 
 public abstract class Entidad implements movimientos {
 	protected BarraDeVida barravida;
-	Rectangle hitBox;
+	protected Rectangle hitBox;
+	protected long vidaMaxima;
 	protected long vida;
-	protected long daño;
+	protected long damage;
 	protected long velocidad;
 	protected ArrayList<Bala> balasEntidad;
 
-	public Entidad(float x, float y, float width, float height, long vida) {
+	public Entidad(float x, float y, float width, float height) {
 		hitBox=new Rectangle(x,y,width,height);
-		this.vida = vida;
-		this.daño = 10;
+		this.vidaMaxima = 100;
+		this.vida = vidaMaxima;
+		this.damage = 10;
 		this.velocidad = 300;
 		balasEntidad = new ArrayList<>();
 	}
@@ -23,20 +25,16 @@ public abstract class Entidad implements movimientos {
 		return vida;
 	}
 
-	public void setVida(long vidaAdicional) {
-		this.vida +=vidaAdicional;
+	public void setVidaMaxima(long vidaAdicional) {
+		this.vidaMaxima +=vidaAdicional;
 	}
 
-	public long getDaño() {
-		return daño;
+	public long getDamage() {
+		return damage;
 	}
 
-	public void setDaño(long dañoAdicional) {
-		this.daño += dañoAdicional;
-	}
-
-	public long getVelocidad() {
-		return velocidad;
+	public void setDamage(long extraDamage) {
+		this.damage += extraDamage;
 	}
 
 	public void setVelocidad(long velocidadExtra) {

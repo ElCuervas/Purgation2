@@ -1,28 +1,28 @@
 package com.purgation2.game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Bala extends Rectangle {
-	private long dañoBala;
+	private final long bulletDamage;
 	public Sprite sprite;
 	private long velocidad;
-	private float angulo;
+	private final float angulo;
 	private boolean perforante;
 
-	public Bala(float x, float y, float targetX, float targetY,Texture bala,long daño) {
+	public Bala(float x, float y, float targetX, float targetY,Texture bala,long damage) {
 		super(x, y, 64, 64);
 		sprite = new Sprite(bala);
-		this.dañoBala=daño;
+		this.bulletDamage=damage;
 		this.velocidad = 1000;
 		angulo = MathUtils.atan2(targetY - y, targetX - x);
 		perforante=false;
 	}
 
-	public long getDañoBala() {
-		return dañoBala;
+	public long getBulletDamage() {
+		return bulletDamage;
+
 	}
 
 	public boolean isPerforante() {

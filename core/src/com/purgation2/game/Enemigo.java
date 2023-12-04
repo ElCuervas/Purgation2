@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.Iterator;
@@ -17,8 +16,8 @@ public class Enemigo extends Entidad {
     Animation<TextureRegion> animation;
     protected float stateTime;
 
-    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation,long vida) {
-        super(x, y, width, height, vida);
+    public Enemigo(float x, float y, float width, float height, Jugador player, Animation<TextureRegion> animation) {
+        super(x, y, width, height);
         Barravida(new Texture(Gdx.files.internal("barra vida.png")),0,0,1);
         this.animation=animation;
         this.target = player;
@@ -61,12 +60,12 @@ public class Enemigo extends Entidad {
 
     }
     @Override
-    public void recibirDaño(Entidad jugador) {
+    public void takeDamage(Entidad jugador) {
         Iterator<Bala> iterBalas = jugador.balasEntidad.iterator();
         while (iterBalas.hasNext()) {
             Bala proyectil = iterBalas.next();
             if (proyectil.overlaps(hitBox)) {
-                vida -= proyectil.getDañoBala();
+                vida -= proyectil.getBulletDamage();
                 if (!proyectil.isPerforante()) {
                     iterBalas.remove();
                 }
@@ -76,10 +75,10 @@ public class Enemigo extends Entidad {
     @Override
     public void atacar( Texture bala) {
         if (chanceAtacar()) {
-            Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDaño());
+            Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDamage());
             balasEntidad.add(nuevaBala);
         }
-        target.recibirDaño(this);
+        target.takeDamage(this);
     }
     private boolean chanceAtacar() {
         double probabilidad = Math.random();
