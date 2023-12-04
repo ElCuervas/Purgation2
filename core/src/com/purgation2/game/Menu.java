@@ -18,7 +18,6 @@ public class Menu implements Screen {
 		fondo=new Texture(Gdx.files.internal("fondo.png"));
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
-		juego = new GameScreen(game);
 	}
 
 	@Override
@@ -37,7 +36,7 @@ public class Menu implements Screen {
 		game.batch.draw(fondo,0,0,camera.viewportWidth,camera.viewportHeight);
 		game.batch.end();
 		if (Gdx.input.isTouched()) {
-			game.setScreen(juego);
+			game.setScreen(juego = new GameScreen(game));
 			dispose();
 		}
 	}

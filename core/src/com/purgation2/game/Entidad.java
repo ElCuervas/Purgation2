@@ -27,6 +27,7 @@ public abstract class Entidad implements movimientos {
 
 	public void setVidaMaxima(long vidaAdicional) {
 		this.vidaMaxima +=vidaAdicional;
+		this.vida += vidaAdicional;
 	}
 
 	public long getDamage() {

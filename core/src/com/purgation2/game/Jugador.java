@@ -37,6 +37,7 @@ public class Jugador extends Entidad {
 	private long cadenciaDisparo;
 	private OrthographicCamera camaraJuego;
 	Sound soundbala;
+	Sound soundbalaespecial;
 	Sound dashsound;
 	private long flip=1;
 	private long dashkey=0;
@@ -45,7 +46,7 @@ public class Jugador extends Entidad {
 	public Jugador(float x, float y, float width, float height, Texture image,Animation<TextureRegion> balaespecial) {
 		super(x, y, width, height);
 		barratexture=new Texture(Gdx.files.internal("barraplayer.png"));
-		Barravida(barratexture,-1200,600,3);
+		Barravida(barratexture,-1775,550,4);
 		this.probabilidadCritico=0.02;
 		this.criticalDamage =2;
 		this.damage =20;
@@ -61,6 +62,7 @@ public class Jugador extends Entidad {
 		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		dashsound=Gdx.audio.newSound(Gdx.files.internal("dash.ogg"));
+		soundbalaespecial=Gdx.audio.newSound(Gdx.files.internal("balaespecial.mp3"));
 		dashsound.setVolume(1,4f);
 
 		tiempoUltimoAtaque = 0;
@@ -159,7 +161,11 @@ public class Jugador extends Entidad {
 	public void atacar( Texture balaTexture) {
 		long tiempoActual = System.currentTimeMillis();
 		if ((Gdx.input.isButtonPressed(Input.Buttons.LEFT)||Gdx.input.isButtonPressed(Input.Buttons.RIGHT))&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
-			soundbala.play();
+			if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
+				soundbalaespecial.play();
+			} else if ((Gdx.input.isButtonPressed(Input.Buttons.LEFT))){
+				soundbala.play();
+			}
 			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camaraJuego.unproject(touchPos);

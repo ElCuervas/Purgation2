@@ -21,6 +21,7 @@ public class GameScreen implements Screen,Runnable{
 	Sprite borde;
 	AssetManager asset;
 	Sound DeadSound;
+	Sound DeadPlayer;
 	Music SongMusic;
 	Jugador player1;
 	ArrayList<Enemigo> enemigos;
@@ -29,6 +30,7 @@ public class GameScreen implements Screen,Runnable{
 	private long[] mejorasEnemigo={0,0,0,0,10};
 	private long[] mejorasJefe={0,0,0,0,1};
 	private final Mejoras mejoras;
+
 
 	public GameScreen(final Setup game){
 		this.game=game;
@@ -80,8 +82,8 @@ public class GameScreen implements Screen,Runnable{
 		mapa.setSize(5000,5000);
 
 		borde = new Sprite((Texture) asset.get("borde.png"));
-		borde.setPosition(-1400,-1400);
-		borde.setSize(8000,8000);
+		borde.setPosition(-2000,-2000);
+		borde.setSize(10000,10000);
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
@@ -91,9 +93,11 @@ public class GameScreen implements Screen,Runnable{
 		updateCameraPosition();
 
 		DeadSound=Gdx.audio.newSound(Gdx.files.internal("dead.mp3"));
+		DeadPlayer=Gdx.audio.newSound(Gdx.files.internal("deadplayer.mp3"));
 		SongMusic=Gdx.audio.newMusic(Gdx.files.internal("songfond.mp3"));
-		SongMusic.setVolume(0f);
+		SongMusic.setVolume(0.4f);
 		SongMusic.setLooping(true);
+		SongMusic.play();
 	}
 
 	@Override
@@ -117,6 +121,21 @@ public class GameScreen implements Screen,Runnable{
 		for (Jefe jefe : jefes){
 			jefe.renderizar(game.batch);
 			jefe.atacar((Texture) asset.get("bala.png"));
+		}
+		if (player1.vida <= 0) {
+			for (Enemigo enemigo:enemigos) {
+				enemigo.velocidad=0;
+			}
+			for (Jefe jefe:jefes){
+				jefe.velocidad=0;
+			}
+			SongMusic.stop();
+			DeadPlayer.play();
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		player1.renderizar(game.batch,camera,(Texture) asset.get("bala.png"));//renderizado individual jugador
 		game.batch.end();
@@ -170,13 +189,12 @@ public class GameScreen implements Screen,Runnable{
 	}
 	@Override
 	public void resize(int width, int height) {
-		camera.viewportWidth = 40f;
-		camera.viewportHeight = 40f * height/width;
+		camera.viewportWidth = 60f;
+		camera.viewportHeight = 60f * height/width;
 		camera.update();
 	}
 	@Override
 	public void show() {
-		SongMusic.play();
 	}
 	@Override
 	public void pause() {

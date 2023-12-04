@@ -12,6 +12,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("Purgation2");
 		config.setWindowIcon("logo.png");
+		config.setMaximized(true);
 		new Lwjgl3Application(new Setup(), config);
 	}
 }
