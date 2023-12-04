@@ -51,10 +51,6 @@ public class Jefe extends Enemigo {
 		}
 	}
 
-	public void ataqueEspecial(SpriteBatch batch) {//posible adicion
-
-	}
-
     public void setDelayAtaque(long delay) {
 		this.delayAtaque-=delay;
     }

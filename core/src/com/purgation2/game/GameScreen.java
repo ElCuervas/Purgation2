@@ -25,11 +25,9 @@ public class GameScreen implements Screen,Runnable{
 	Jugador player1;
 	ArrayList<Enemigo> enemigos;
 	ArrayList<Jefe> jefes;
-	ArrayList<minion> minions;
 	float stateTime;
-	private long[] mejorasEnemigo={0,0,0,0,10};;
-	private long[] mejorasJefe={0,0,0,0,1};;
-	private long[] mejorasMinion;
+	private long[] mejorasEnemigo={0,0,0,0,10};
+	private long[] mejorasJefe={0,0,0,0,1};
 	private final Mejoras mejoras;
 
 	public GameScreen(final Setup game){
@@ -53,20 +51,20 @@ public class GameScreen implements Screen,Runnable{
 			public void run() {
 				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0));
 			}
-		},0,5);
+		},5,5);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
 				generarJefe(animador((Texture) asset.get("jefe.png"),4,0.1f,0));
 			}
-		},10,10);
+		},5,10);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
 				mejorasEnemigo=mejoras.mejorarEstadisiticasEnemigo();
 				mejorasJefe=mejoras.mejorarEstadisticasJefe();
 			}
-		},5,5);
+		},6,5);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
@@ -233,9 +231,6 @@ public class GameScreen implements Screen,Runnable{
 			spawnY = MathUtils.random(0, 5000);
 		} while (spawnY > camera.position.y - margen - camera.viewportHeight / 2 && spawnY < margen +camera.position.y + camera.viewportHeight / 2);
 		return spawnY;
-	}
-
-	public void generarMinion() {
 	}
 	private void handleInput() {
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
