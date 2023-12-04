@@ -1,4 +1,5 @@
 package com.purgation2.game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
@@ -6,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Bala extends Rectangle {
 	private long dañoBala;
-	private Sprite sprite;
+	public Sprite sprite;
 	private long velocidad;
 	private float angulo;
 	private boolean perforante;
@@ -31,7 +32,6 @@ public class Bala extends Rectangle {
 	public void actualizar(float delta) {
 		float xSpeed = velocidad * MathUtils.cos(angulo);
 		float ySpeed = velocidad * MathUtils.sin(angulo);
-
 		x += xSpeed * delta;
 		y += ySpeed * delta;
 	}
@@ -45,5 +45,9 @@ public class Bala extends Rectangle {
 
 	public Sprite getSprite() {
 		return sprite;
+	}
+
+	public void setPerforante(boolean perforante) {
+		this.perforante = perforante;
 	}
 }

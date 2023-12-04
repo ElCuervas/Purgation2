@@ -42,8 +42,9 @@ public class GameScreen implements Screen,Runnable{
 		asset.load("enemigo.png", Texture.class);
 		asset.load("bala.png",Texture.class);
 		asset.load("jefe.png",Texture.class);
+		asset.load("charged.png",Texture.class);
 		asset.finishLoading();
-		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),100);
+		player1 = new Jugador(2500,2500,64*3,64*3,((Texture) asset.get("Player.png")),100,animador((Texture) asset.get("charged.png"),7,0.1f,0));
 		enemigos=new ArrayList<>();
 		jefes= new ArrayList<>();
 		mejoras = new Mejoras(player1);
@@ -71,7 +72,7 @@ public class GameScreen implements Screen,Runnable{
 			@Override
 			public void run() {
 				player1.mejorarEstadisticas(mejoras.mejorarEstadisticasJugador());
-				//System.out.println(player1.getVida());
+				System.out.println(player1.getVida());
 			}
 		},0,1);
 
@@ -94,7 +95,7 @@ public class GameScreen implements Screen,Runnable{
 
 		DeadSound=Gdx.audio.newSound(Gdx.files.internal("dead.mp3"));
 		SongMusic=Gdx.audio.newMusic(Gdx.files.internal("songfond.mp3"));
-		SongMusic.setVolume(0.4f);
+		SongMusic.setVolume(0f);
 		SongMusic.setLooping(true);
 	}
 
@@ -115,6 +116,7 @@ public class GameScreen implements Screen,Runnable{
 			enemigo.atacar((Texture) asset.get("bala.png"));
 		}
 		separacion();
+		separacionjugador();
 		for (Jefe jefe : jefes){
 			jefe.renderizar(game.batch);
 			jefe.atacar((Texture) asset.get("bala.png"));
@@ -124,38 +126,6 @@ public class GameScreen implements Screen,Runnable{
 		limiteMapa();
 		removerEnemigos();
 	}
-	private void separacion(){
-		for (int i = 0; i < enemigos.size(); i++) {
-			Enemigo enemigoA = enemigos.get(i);
-			for (int j = i + 1; j < enemigos.size(); j++) {
-				Enemigo enemigoB = enemigos.get(j);
-				float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, enemigoB.hitBox.x, enemigoB.hitBox.y);
-				float distanciaMinima = 200;
-				if (distancia < distanciaMinima) {
-					separarEnemigos(enemigoA, enemigoB);
-				}
-			}
-		}
-	}
-	private float calcularDistancia(float x1, float y1, float x2, float y2) {
-		return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-	}
-	private void separarEnemigos(Enemigo enemigoA, Enemigo enemigoB) {
-		float deltaX = enemigoB.hitBox.x - enemigoA.hitBox.x;
-		float deltaY = enemigoB.hitBox.y - enemigoA.hitBox.y;
-		float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, enemigoB.hitBox.x, enemigoB.hitBox.y);
-		float distanciaSegura = 200;
-
-		float traslacionX = (distanciaSegura - distancia) * (deltaX / distancia);
-		float traslacionY = (distanciaSegura - distancia) * (deltaY / distancia);
-
-		enemigoA.hitBox.x -= traslacionX / 2;
-		enemigoA.hitBox.y -= traslacionY / 2;
-
-		enemigoB.hitBox.x += traslacionX / 2;
-		enemigoB.hitBox.y += traslacionY / 2;
-	}
-
 	private void removerEnemigos() {
 		Iterator<Enemigo> iterEnemigos = enemigos.iterator();
 		while (iterEnemigos.hasNext()) {
@@ -298,7 +268,6 @@ public class GameScreen implements Screen,Runnable{
 		if (!playerOnRightEdge && !playerOnLeftEdge) {
 			camera.position.x = player1.hitBox.x + player1.hitBox.width / 2;
 		}
-
 		if (!playerOnTopEdge && !playerOnBottomEdge) {
 			camera.position.y = player1.hitBox.y + player1.hitBox.height /2;
 		}
@@ -319,5 +288,61 @@ public class GameScreen implements Screen,Runnable{
 	@Override
 	public void run() {
 
+	}
+	private void separacion(){
+		for (int i = 0; i < enemigos.size(); i++) {
+			Enemigo enemigoA = enemigos.get(i);
+			for (int j = i + 1; j < enemigos.size(); j++) {
+				Enemigo enemigoB = enemigos.get(j);
+				float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, enemigoB.hitBox.x, enemigoB.hitBox.y);
+				float distanciaMinima = 200;
+				if (distancia < distanciaMinima) {
+					separarEnemigos(enemigoA, enemigoB);
+				}
+			}
+		}
+	}
+	private float calcularDistancia(float x1, float y1, float x2, float y2) {
+		return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+	}
+	private void separarEnemigos(Enemigo enemigoA, Enemigo enemigoB) {
+		float deltaX = enemigoB.hitBox.x - enemigoA.hitBox.x;
+		float deltaY = enemigoB.hitBox.y - enemigoA.hitBox.y;
+		float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, enemigoB.hitBox.x, enemigoB.hitBox.y);
+		float distanciaSegura = 200;
+
+		float traslacionX = (distanciaSegura - distancia) * (deltaX / distancia);
+		float traslacionY = (distanciaSegura - distancia) * (deltaY / distancia);
+
+		enemigoA.hitBox.x -= traslacionX / 2;
+		enemigoA.hitBox.y -= traslacionY / 2;
+
+		enemigoB.hitBox.x += traslacionX / 2;
+		enemigoB.hitBox.y += traslacionY / 2;
+	}
+	private void separacionjugador(){
+		for (int i = 0; i < enemigos.size(); i++) {
+			Enemigo enemigoA = enemigos.get(i);
+			float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, player1.hitBox.x, player1.hitBox.y);
+			float distanciaMinima = 250;
+			if (distancia < distanciaMinima) {
+				separarjugador(enemigoA);
+			}
+		}
+	}
+	private void separarjugador(Enemigo enemigoA) {
+		float deltaX = player1.hitBox.x - enemigoA.hitBox.x;
+		float deltaY = player1.hitBox.y - enemigoA.hitBox.y;
+		float distancia = calcularDistancia(enemigoA.hitBox.x, enemigoA.hitBox.y, player1.hitBox.x, player1.hitBox.y);
+		float distanciaSegura = 250;
+
+		float traslacionX = (distanciaSegura - distancia) * (deltaX / distancia);
+		float traslacionY = (distanciaSegura - distancia) * (deltaY / distancia);
+
+		enemigoA.hitBox.x -= traslacionX / 2;
+		enemigoA.hitBox.y -= traslacionY / 2;
+
+		player1.hitBox.x += traslacionX / 2;
+		player1.hitBox.y += traslacionY / 2;
 	}
 }
