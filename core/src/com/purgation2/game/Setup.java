@@ -3,8 +3,6 @@ package com.purgation2.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 
 public class Setup extends Game {
 	public SpriteBatch batch;

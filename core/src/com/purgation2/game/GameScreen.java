@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.*;
-public class GameScreen implements Screen {
+public class GameScreen implements Screen,Runnable{
 	final Setup game;
 	OrthographicCamera camera;
 	Sprite mapa;
@@ -28,7 +28,7 @@ public class GameScreen implements Screen {
 	ArrayList<minion> minions;
 	float stateTime;
 	private long[] mejorasEnemigo={0,0,0,0,10};;
-	private long[] mejorasJefe={0,0,0,0,30};;
+	private long[] mejorasJefe={0,0,0,0,1};;
 	private long[] mejorasMinion;
 	private Mejoras mejoras;
 	private BarraDeVida barraDeVida;
@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
-				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0),mejorasEnemigo[4]);
+				generarEnemigo(animador((Texture) asset.get("enemigo.png"),3,0.2f,0));
 			}
 		},2,10);
 		Timer.schedule(new Timer.Task() {
@@ -59,11 +59,19 @@ public class GameScreen implements Screen {
 			public void run() {
 				generarJefe(animador((Texture) asset.get("jefe.png"),4,0.1f,0));
 			}
-		},10,mejorasJefe[4]);
+		},10,30);
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+				mejorasEnemigo=mejoras.mejorarEstadisiticasEnemigo();
+				mejorasJefe=mejoras.mejorarEstadisticasJefe();
+			}
+		},15,30);
 		Timer.schedule(new Timer.Task() {
 			@Override
 			public void run() {
 				player1.mejorarEstadisticas(mejoras.mejorarEstadisticasJugador());
+				//System.out.println(player1.getVida());
 			}
 		},0,1);
 
@@ -220,17 +228,27 @@ public class GameScreen implements Screen {
 		asset.dispose();
 		DeadSound.dispose();
 	}
-	public void generarEnemigo(Animation<TextureRegion> animation, long cantidadEnemigos) {
-		for (long i = 0; i < cantidadEnemigos; i++) {
-			int margen = 1000;
+	public void generarEnemigo(Animation<TextureRegion> animation) {
+		int margen = 1000;
+		for (long i = 0; i < mejorasEnemigo[4]; i++) {
 			Enemigo nuevoEnemigo = new Enemigo(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,100);
+			nuevoEnemigo.setVida(mejorasEnemigo[0]);
+			nuevoEnemigo.setDaño(mejorasEnemigo[1]);
+			nuevoEnemigo.setVelocidad(mejorasEnemigo[2]);
+			nuevoEnemigo.setProbabilidadAtaque(mejorasEnemigo[3]);
 			enemigos.add(nuevoEnemigo);
 		}
 	}
 	public void generarJefe(Animation<TextureRegion> animation) {
 		int margen = 1000;
-		Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,400);
-		jefes.add(jefe);
+		for (int i = 0; i < mejorasJefe[4]; i++) {
+			Jefe jefe = new Jefe(crearCordenadaX( margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1,animation,400);
+			jefe.setVida(mejorasJefe[0]);
+			jefe.setDaño(mejorasJefe[1]);
+			jefe.setVelocidad(mejorasJefe[2]);
+			jefe.setDelayAtaque(mejorasJefe[3]);
+			jefes.add(jefe);
+		}
 	}
 	private float crearCordenadaX(int margen) {
 		float spawnX;
@@ -296,5 +314,10 @@ public class GameScreen implements Screen {
 		}
 		Animation<TextureRegion> animationfinal = new Animation<>(fotogramas,animation);
 		return animationfinal;
+	}
+
+	@Override
+	public void run() {
+
 	}
 }

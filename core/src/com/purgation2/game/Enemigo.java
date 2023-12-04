@@ -86,4 +86,7 @@ public class Enemigo extends Entidad {
         return probabilidad < probabilidadAtaque;
     }
 
+    public void setProbabilidadAtaque(long mejoraProbabilidad) {
+        this.probabilidadAtaque+= (double) mejoraProbabilidad /100000;
+    }
 }

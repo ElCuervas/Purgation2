@@ -23,16 +23,16 @@ public abstract class Entidad implements movimientos {
 		return vida;
 	}
 
-	public void setVida(long vida) {
-		this.vida = vida;
+	public void setVida(long vidaAdicional) {
+		this.vida +=vidaAdicional;
 	}
 
 	public long getDaño() {
 		return daño;
 	}
 
-	public void setDaño(long daño) {
-		this.daño = daño;
+	public void setDaño(long dañoAdicional) {
+		this.daño += dañoAdicional;
 	}
 
 	public long getVelocidad() {

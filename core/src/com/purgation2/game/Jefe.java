@@ -55,4 +55,7 @@ public class Jefe extends Enemigo {
 
 	}
 
+    public void setDelayAtaque(long delay) {
+		this.delayAtaque-=delay;
+    }
 }
