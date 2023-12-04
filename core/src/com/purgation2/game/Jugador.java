@@ -29,6 +29,7 @@ public class Jugador extends Entidad {
 	private Animation<TextureRegion> dashAnimation;
 	private Animation<TextureRegion> dashupAnimation;
 	private Animation<TextureRegion> dashdownAnimation;
+	private Animation<TextureRegion> balaespecial;
 	private float tiempoParpadeo;
 	private Texture textureAnimation;
 	private Texture barratexture;
@@ -40,7 +41,7 @@ public class Jugador extends Entidad {
 	Sound dashsound;
 	private long flip=1;
 	private long dashkey=0;
-	public Jugador(float x, float y, float width, float height, Texture image,long vida) {
+	public Jugador(float x, float y, float width, float height, Texture image,long vida,Animation<TextureRegion> balaespecial) {
 		super(x, y, width, height,vida);
 		barratexture=new Texture(Gdx.files.internal("barraplayer.png"));
 		Barravida(barratexture,-1200,600,3);
@@ -51,6 +52,7 @@ public class Jugador extends Entidad {
 		this.tiempoInvencivilidad=1500;
 		this.cadenciaDisparo=500;
 		this.puntajeTotal=0;
+		this.balaespecial=balaespecial;
 		setVelocidad(200);
 		setVelocidad(0);
 		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -113,8 +115,20 @@ public class Jugador extends Entidad {
 		sprite.setPosition(hitBox.x, hitBox.y);
 		sprite.setSize(hitBox.width, hitBox.height);
 		stateTime+=Gdx.graphics.getDeltaTime();
+		Sprite balaactual = new Sprite(balaespecial.getKeyFrame(stateTime, true));
 		for (Bala bala : balasEntidad) {
-			batch.draw(bala.getSprite(), bala.x, bala.y, bala.width, bala.height);
+			if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
+				bala.setPerforante(true);
+				bala.sprite.setRegion(balaactual);
+				float balaW=bala.width*3;
+				float balaH=bala.height*3;
+				batch.draw(bala.sprite, bala.x, bala.y, balaW, balaH);
+			}else{
+				float balaW=bala.width;
+				float balaH=bala.height;
+				bala.setPerforante(false);
+				batch.draw(bala.sprite, bala.x, bala.y, balaW, balaH);
+			}
 		}
 		sprite.draw(batch);
 		barravida.dibujarBarraVida(batch);
@@ -141,7 +155,7 @@ public class Jugador extends Entidad {
 	@Override
 	public void atacar( Texture balaTexture) {
 		long tiempoActual = System.currentTimeMillis();
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
+		if ((Gdx.input.isButtonPressed(Input.Buttons.LEFT)||Gdx.input.isButtonPressed(Input.Buttons.RIGHT))&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
 			soundbala.play();
 			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
