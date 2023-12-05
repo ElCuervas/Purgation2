@@ -125,16 +125,7 @@ public class GameScreen implements Screen {
 				jefe.renderizar(game.batch);
 				jefe.atacar((Texture) asset.get("bala.png"));
 			}
-			if (player1.vida <= 0) {
-				for (Enemigo enemigo : enemigos) {
-					enemigo.velocidad = 0;
-				}
-				for (Jefe jefe : jefes) {
-					jefe.velocidad = 0;
-				}
-				SongMusic.stop();
-				DeadPlayer.play();
-			}
+
 			player1.renderizar(game.batch, camera, (Texture) asset.get("bala.png"));//renderizado individual jugador
 			limiteMapa();
 			removerEnemigos();
