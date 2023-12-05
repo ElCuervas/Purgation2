@@ -1,7 +1,5 @@
 sourceCompatibility = 1.7
 dependencies {
-    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

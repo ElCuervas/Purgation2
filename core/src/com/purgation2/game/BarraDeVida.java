@@ -1,12 +1,7 @@
 package com.purgation2.game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-import java.util.Arrays;
-
 public class BarraDeVida {
 
     private TextureRegion[] vidaActual;

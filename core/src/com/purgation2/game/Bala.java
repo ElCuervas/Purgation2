@@ -22,7 +22,6 @@ public class Bala extends Rectangle {
 
 	public long getBulletDamage() {
 		return bulletDamage;
-
 	}
 
 	public boolean isPerforante() {

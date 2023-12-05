@@ -48,13 +48,13 @@ public class Mejoras {
 
 			while (mejorasConcedidas!=0){
 
-				mejorasJugador[0] += 10L * mejorasTotales; //* vida maxima extra
+				mejorasJugador[0] += player.vidaMaxima/3; //* vida maxima extra
 				mejorasJugador[1] += 1; //+regeneracion x segundo
-				mejorasJugador[2] += 10L * mejorasTotales; //daño extra
+				mejorasJugador[2] += player.damage/3; //daño extra
 				mejorasJugador[3] += 1; //probabilidad de critico (x 100)
 				mejorasJugador[6] +=50; //velocidad extra
-				if (mejorasTotales<=50) {
-					mejorasJugador[8] += 1; // reduccion de cadencia de disparo
+				if (mejorasTotales<=10) {
+					mejorasJugador[8] += 2; // reduccion de cadencia de disparo
 				}
 				mejorasConcedidas--;
 			}
@@ -93,7 +93,7 @@ public class Mejoras {
 		return mejorasJefe;
 	}
 	public void extenderUmbral(){
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 15; i++) {
 			umbral.add(umbral.get(umbral.size()-1)*3);
 		}
 	}

@@ -66,9 +66,5 @@ public class Menu implements Screen {
 
 	}
 
-	public void iniciarJuego() {
-	}
-	public void cerrarJuego() {
-	}
 
 }

@@ -52,13 +52,12 @@ public class Jugador extends Entidad {
 		this.damage =20;
 		this.regenacion=1;
 		this.tiempoInvencivilidad=1500;
-		this.cadenciaDisparo=500;
-		this.puntajeTotal=0;
+		this.cadenciaDisparo=200;
+		this.puntajeTotal=984150;// 984150 para que todos los ataques sean especiales
 		this.contadorKillsEnemigos=0;
 		this.contadorKillsJefes=0;
 		this.balaEspecial=balaespecial;
 		setVelocidad(200);
-		setVelocidad(0);
 		mejorasJugador = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		soundbala=Gdx.audio.newSound(Gdx.files.internal("bala.wav"));
 		dashsound=Gdx.audio.newSound(Gdx.files.internal("dash.ogg"));
@@ -120,21 +119,6 @@ public class Jugador extends Entidad {
 		sprite.setPosition(hitBox.x, hitBox.y);
 		sprite.setSize(hitBox.width, hitBox.height);
 		stateTime+=Gdx.graphics.getDeltaTime();
-		Sprite balaactual = new Sprite(balaEspecial.getKeyFrame(stateTime, true));
-		for (Bala bala : balasEntidad) {
-			if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
-				bala.setPerforante(true);
-				bala.sprite.setRegion(balaactual);
-				float balaW=bala.width*3;
-				float balaH=bala.height*3;
-				batch.draw(bala.sprite, bala.x, bala.y, balaW, balaH);
-			}else{
-				float balaW=bala.width;
-				float balaH=bala.height;
-				bala.setPerforante(false);
-				batch.draw(bala.sprite, bala.x, bala.y, balaW, balaH);
-			}
-		}
 		sprite.draw(batch);
 		barravida.dibujarBarraVida(batch);
 
@@ -142,6 +126,15 @@ public class Jugador extends Entidad {
 			titilar();
 		}else{
 			sprite.setColor(1,1,1,1);
+		}
+
+		Sprite balaActual = new Sprite(balaEspecial.getKeyFrame(stateTime, true));
+		for (Bala bala : balasEntidad) {
+			if (bala.isPerforante()){
+				batch.draw(balaActual, bala.x, bala.y, bala.width*3, bala.height*3);
+			}else {
+				batch.draw(bala.sprite, bala.x, bala.y, bala.width, bala.height);
+			}
 		}
 
 		Iterator<Bala> iter = balasEntidad.iterator();
@@ -160,18 +153,36 @@ public class Jugador extends Entidad {
 	@Override
 	public void atacar( Texture balaTexture) {
 		long tiempoActual = System.currentTimeMillis();
-		if ((Gdx.input.isButtonPressed(Input.Buttons.LEFT)||Gdx.input.isButtonPressed(Input.Buttons.RIGHT))&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
-			if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
-				soundbalaespecial.play();
-			} else if ((Gdx.input.isButtonPressed(Input.Buttons.LEFT))){
-				soundbala.play();
-			}
+		int niveladorAtaques=4;
+		if (mejorasJugador[9]==1){ //si el jugador pasa de 10 mejoras, todos los ataques seran especiales
+			niveladorAtaques=1;
+		}
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& tiempoActual - tiempoUltimoAtaque > cadenciaDisparo) {
 			tiempoUltimoAtaque=tiempoActual;
 			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camaraJuego.unproject(touchPos);
 			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture, getDamage());
-			balasEntidad.add(nuevaBala);
+			if (mejorasJugador[9]==1){
+				soundbalaespecial.play();
+				nuevaBala.setPerforante(true);
+			}else {
+				soundbala.play();
+			}
 			nuevaBala.setVelocidad(nuevaBala.getVelocidad() + 750 + mejorasJugador[7]);
+			balasEntidad.add(nuevaBala);
+
+		}
+
+		if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT) && tiempoActual - tiempoUltimoAtaque > cadenciaDisparo*niveladorAtaques){
+			soundbalaespecial.play();
+			tiempoUltimoAtaque=tiempoActual;
+			Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+			camaraJuego.unproject(touchPos);
+			Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, touchPos.x - 30, touchPos.y - 30, balaTexture, getDamage()/niveladorAtaques);
+			nuevaBala.setPerforante(true);
+			nuevaBala.setVelocidad(nuevaBala.getVelocidad()/niveladorAtaques + 750 + mejorasJugador[7]);
+			balasEntidad.add(nuevaBala);
 		}
 	}
 	@Override
