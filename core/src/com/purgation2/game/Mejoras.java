@@ -42,7 +42,7 @@ public class Mejoras {
 			if (mejorasTotales%3==0){//cada 3 mejoras
 
 				mejorasJugador[4] = 1; //daño critico
-				mejorasJugador[5] = 100; // invencibilidad extra
+				mejorasJugador[5] = 50; // invencibilidad extra
 				mejorasJugador[7] = 25; //velocidad de balas extra
 			}
 

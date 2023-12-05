@@ -64,13 +64,16 @@ public class Enemigo extends Entidad {
         Iterator<Bala> iterBalas = jugador.balasEntidad.iterator();
         while (iterBalas.hasNext()) {
             Bala proyectil = iterBalas.next();
-            if (proyectil.overlaps(hitBox)) {
+            if (proyectil.overlaps(hitBox)&& !esInvecible()) {
                 vida -= proyectil.getBulletDamage();
                 if (!proyectil.isPerforante()) {
                     iterBalas.remove();
                 }
             }
         }
+    }
+    public boolean esInvecible(){
+        return System.currentTimeMillis()- timeLastDamage <tiempoInvencivilidad;
     }
     @Override
     public void atacar( Texture bala) {

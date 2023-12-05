@@ -12,7 +12,7 @@ public class Setup extends Game {
 	public void create() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		this.setScreen(new Menu(this));
+		this.setScreen(new Menu(this,false));
 	}
 	@Override
 	public void render(){

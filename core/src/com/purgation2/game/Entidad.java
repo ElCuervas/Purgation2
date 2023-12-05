@@ -11,6 +11,8 @@ public abstract class Entidad implements movimientos {
 	protected long vida;
 	protected long damage;
 	protected long velocidad;
+	protected double tiempoInvencivilidad;
+	protected long timeLastDamage =0;
 	protected ArrayList<Bala> balasEntidad;
 
 	public Entidad(float x, float y, float width, float height) {
@@ -20,6 +22,7 @@ public abstract class Entidad implements movimientos {
 		this.damage = 10;
 		this.velocidad = 300;
 		balasEntidad = new ArrayList<>();
+		tiempoInvencivilidad=0.25;
 	}
 	public long getVida() {
 		return vida;
@@ -44,5 +47,14 @@ public abstract class Entidad implements movimientos {
 
 	public void Barravida(Texture barravida,float modificacionX,float modificacionY,float multiplicador) {
 		this.barravida = new BarraDeVida(this,barravida,modificacionX,modificacionY,multiplicador);
+	}
+	public boolean esInvecible(){
+		return System.currentTimeMillis()- timeLastDamage <tiempoInvencivilidad;
+	}
+	public void reset(){
+		this.vidaMaxima = 100;
+		this.vida = vidaMaxima;
+		this.damage = 10;
+		this.velocidad = 300;
 	}
 }

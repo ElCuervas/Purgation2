@@ -30,8 +30,6 @@ public class GameScreen implements Screen {
 	private long[] mejorasEnemigo = {0, 0, 0, 0, 10};
 	private long[] mejorasJefe = {0, 0, 0, 0, 1};
 	private final Mejoras mejoras;
-
-
 	public GameScreen(final Setup game) {
 		this.game = game;
 		asset = new AssetManager();
@@ -102,41 +100,47 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 		handleInput();
 		stateTime += Gdx.graphics.getDeltaTime();
 
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
-
-		borde.draw(game.batch);
-		mapa.draw(game.batch);
-
-		for (Enemigo enemigo : enemigos) {
-			enemigo.renderizar(game.batch);
-			enemigo.atacar((Texture) asset.get("bala.png"));
-		}
-		separacion();
-		separacionjugador();
-		for (Jefe jefe : jefes) {
-			jefe.renderizar(game.batch);
-			jefe.atacar((Texture) asset.get("bala.png"));
-		}
 		if (player1.vida <= 0) {
-			for (Enemigo enemigo : enemigos) {
-				enemigo.velocidad = 0;
-			}
-			for (Jefe jefe : jefes) {
-				jefe.velocidad = 0;
-			}
 			SongMusic.stop();
 			DeadPlayer.play();
+			game.setScreen(new Menu(game,true));
+		} else {
+			borde.draw(game.batch);
+			mapa.draw(game.batch);
 
+			for (Enemigo enemigo : enemigos) {
+				enemigo.renderizar(game.batch);
+				enemigo.atacar((Texture) asset.get("bala.png"));
+			}
+			separacion();
+			separacionjugador();
+			for (Jefe jefe : jefes) {
+				jefe.renderizar(game.batch);
+				jefe.atacar((Texture) asset.get("bala.png"));
+			}
+			if (player1.vida <= 0) {
+				for (Enemigo enemigo : enemigos) {
+					enemigo.velocidad = 0;
+				}
+				for (Jefe jefe : jefes) {
+					jefe.velocidad = 0;
+				}
+				SongMusic.stop();
+				DeadPlayer.play();
+			}
+			player1.renderizar(game.batch, camera, (Texture) asset.get("bala.png"));//renderizado individual jugador
+			limiteMapa();
+			removerEnemigos();
 		}
-		player1.renderizar(game.batch, camera, (Texture) asset.get("bala.png"));//renderizado individual jugador
 		game.batch.end();
-		limiteMapa();
-		removerEnemigos();
+
 	}
 
 	private void removerEnemigos() {
@@ -234,7 +238,7 @@ public class GameScreen implements Screen {
 		for (int i = 0; i < mejorasJefe[4]; i++) {
 			Jefe jefe = new Jefe(crearCordenadaX(margen), crearCordenadaY(margen), 64 * 3, 64 * 3, player1, animation);
 			jefe.setVidaMaxima(400 + mejorasJefe[0]);
-			jefe.setDamage(mejorasJefe[1]);
+			jefe.setDamage(20+mejorasJefe[1]);
 			jefe.setVelocidad(mejorasJefe[2]);
 			jefe.setDelayAtaque(mejorasJefe[3]);
 			jefes.add(jefe);

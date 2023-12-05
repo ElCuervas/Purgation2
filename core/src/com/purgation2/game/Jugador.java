@@ -18,8 +18,6 @@ public class Jugador extends Entidad {
 	private double probabilidadCritico;
 	private long criticalDamage;
 	private double regenacion;
-	private long tiempoInvencivilidad;
-	private long timeLastDamage =1000;
 	private long tiempoUltimoDash;
 	private long tiempoDash=400;
 	private long puntajeTotal;
@@ -51,9 +49,9 @@ public class Jugador extends Entidad {
 		this.criticalDamage =2;
 		this.damage =20;
 		this.regenacion=1;
-		this.tiempoInvencivilidad=1500;
+		this.tiempoInvencivilidad=1000;
 		this.cadenciaDisparo=200;
-		this.puntajeTotal=984150;// 984150 para que todos los ataques sean especiales
+		this.puntajeTotal=0;// 984150 para que todos los ataques sean especiales
 		this.contadorKillsEnemigos=0;
 		this.contadorKillsJefes=0;
 		this.balaEspecial=balaespecial;
@@ -205,10 +203,6 @@ public class Jugador extends Entidad {
 		if (vida<vidaMaxima){
 			vida+=regenacion;
 		}
-	}
-
-	public boolean esInvecible(){
-		return System.currentTimeMillis()- timeLastDamage <tiempoInvencivilidad;
 	}
 	private void titilar() {
 		if (tiempoParpadeo <= 5.0f) {

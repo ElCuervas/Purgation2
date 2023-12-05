@@ -19,6 +19,7 @@ public class Jefe extends Enemigo {
 		this.hitBox.width=hitBox.width*5;
 		this.hitBox.height=hitBox.height*5;
 		delayAtaque = 500;
+		this.tiempoInvencivilidad=0.5;
 	}
 	public void renderizar(SpriteBatch batch) {
 		stateTime+= Gdx.graphics.getDeltaTime();
@@ -45,7 +46,7 @@ public class Jefe extends Enemigo {
 		long tiempoActual = System.currentTimeMillis();
 		if (tiempoActual - tiempoUltimoAtaque > delayAtaque) {
 				tiempoUltimoAtaque = tiempoActual;
-			    Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDamage());
+			    Bala nuevaBala = new Bala(hitBox.x + hitBox.width / 2, hitBox.y + hitBox.height / 2, target.hitBox.x + target.hitBox.width / 2, target.hitBox.y + target.hitBox.height / 2, bala, getDamage()/2);
 			    balasEntidad.add(nuevaBala);
 			    target.takeDamage(this);
 		}
