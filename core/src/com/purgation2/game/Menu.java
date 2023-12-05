@@ -26,7 +26,6 @@ public class Menu implements Screen {
 		camera.setToOrtho(false, 800, 480);
 		reiniciarJuego =reinicio;
 	}
-
 	@Override
 	public void show() {
 
