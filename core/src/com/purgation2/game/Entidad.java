@@ -51,10 +51,4 @@ public abstract class Entidad implements movimientos {
 	public boolean esInvecible(){
 		return System.currentTimeMillis()- timeLastDamage <tiempoInvencivilidad;
 	}
-	public void reset(){
-		this.vidaMaxima = 100;
-		this.vida = vidaMaxima;
-		this.damage = 10;
-		this.velocidad = 300;
-	}
 }
