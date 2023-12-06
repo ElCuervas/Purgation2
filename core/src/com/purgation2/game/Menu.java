@@ -2,6 +2,7 @@ package com.purgation2.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -13,6 +14,7 @@ public class Menu implements Screen {
 	Texture fondo;
 	Texture fondoGameOver;
 	GameScreen juego;
+	Sound gameoverSound;
 	boolean reiniciarJuego;
 	private boolean gameOverTriggered = false;
 	private float gameOverTimer = 0f;
@@ -22,8 +24,9 @@ public class Menu implements Screen {
 		this.game = game;
 		fondo=new Texture(Gdx.files.internal("fondo.png"));
 		fondoGameOver=new Texture(Gdx.files.internal("Fondo GameOver.png"));
+		gameoverSound= Gdx.audio.newSound(Gdx.files.internal("game over.wav"));
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 1366, 1024);
 		reiniciarJuego =reinicio;
 	}
 	@Override
@@ -49,6 +52,7 @@ public class Menu implements Screen {
 			game.batch.draw(fondoGameOver,0,0,camera.viewportWidth,camera.viewportHeight);
 			if (!gameOverTriggered) {
 				gameOverTimer = 0f;
+				gameoverSound.play();
 				gameOverTriggered = true;
 			}
 			gameOverTimer += Gdx.graphics.getDeltaTime();
